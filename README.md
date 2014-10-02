@@ -1,29 +1,32 @@
-# Immutable::Struct
+# Immutable Struct
 
-TODO: Write a gem description
+Creates struct-like classes (that can build value objects) that do not have setters and also have better constructors than Ruby's built-in `Struct`.
 
-## Installation
+## Install
 
-Add this line to your application's Gemfile:
+Add to your `Gemfile`:
 
-    gem 'immutable-struct'
+```ruby
+gem 'immutable-struct'
+```
 
-And then execute:
+## To use
 
-    $ bundle
+See RDoc on `ImmutableStruct` for more details, but basically:
 
-Or install it yourself as:
 
-    $ gem install immutable-struct
+```ruby
+Person = StitchFix::ImmutableStruct.new(:name, :age, :active?) do
+  def minor?
+    age < 18
+  end
+end
 
-## Usage
+p = Person.new(name: "Dave", age: 40, active: true)
+p.name    # => "Dave"
+p.age     # => 40
+p.active? # => true
+p.minor?  # => false
+```
 
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Note that we created our class using `:active?`, which tells it that it's a boolean property, but that we can still use `:active` when creating instances.
