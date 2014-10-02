@@ -36,4 +36,10 @@ If not using bundler, just use RubyGems:
     p.active? # => true
     p.minor?  # => false
 
-You can also treat the interior as a normal class definition.  See the rdoc[http://stitchfix.github.io/immutable-struct] for more info.
+You can also treat the interior as a normal class definition.  
+
+== Links
+
+* rdoc[http://stitchfix.github.io/immutable-struct]
+* source[http://github.com/stitchfix/immutable-struct]
+* blog[http://technology.stitchfix.com/blog/2013/12/20/presenters-delegation-vs-structs/]
