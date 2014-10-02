@@ -6,16 +6,16 @@
 # will be evaluated as if it were inside a class definition, allowing you
 # to add methods, include or extend modules, or do whatever else you want.
 class ImmutableStruct
-  VERSION='1.2.0'
+  VERSION='1.2.0' #:nodoc:
   # Create a new class with the given read-only attributes.
   #
   # attributes:: list of symbols or strings that can be used to create attributes.
-  #              Any attribute with a question mark in it (e.g. :foo?) will create
+  #              Any attribute with a question mark in it (e.g. +:foo?+) will create
   #              an attribute without a question mark that passes through the raw
-  #              value and an attribute WITH the question mark that coerces that
+  #              value and an attribute *with* the question mark that coerces that
   #              value to a boolean.  You would initialize it with the non-question-mark value
-  # block:: if present, evaluates in the context of the new class, so def, def.self, include
-  # and extend should all work.
+  # block:: if present, evaluates in the context of the new class, so +def+, +def.self+, +include+
+  #         and +extend+ should all work as in a normal class definition.
   #
   # Example:
   #

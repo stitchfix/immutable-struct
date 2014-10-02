@@ -1,0 +1,39 @@
+= ImmutableStruct
+
+Creates struct-like classes (that can build value objects) that do not have setters and also have better constructors than Ruby's built-in +Struct+.
+
+This is highly useful for creating presenters, non-database-related models, or other quick and dirty classes in your application.  Instead of using a +Hash+ or +OpenStruct+, you can create a bit more clarity around your types by using +ImmutableStruct+, which is almost as convienient.
+
+== Install
+
+Add to your +Gemfile+:
+
+    gem 'immutable-struct'
+
+Then install:
+
+    bundle install
+
+If not using bundler, just use RubyGems:
+
+    gem install immutable-struct
+
+
+== To use
+
+    Person = StitchFix::ImmutableStruct.new(:name, :age, :job, :active?) do
+      def minor?
+        age < 18
+      end
+    end
+
+    p = Person.new(name: "Dave",   # name will be 'Dave'
+                   age: 40,        # age will be 40
+                                   # job is omitted, so will be nil
+                   active: true)   # active and active? will be true
+    p.name    # => "Dave"
+    p.age     # => 40
+    p.active? # => true
+    p.minor?  # => false
+
+You can also treat the interior as a normal class definition.  See the rdoc[http://stitchfix.github.io/immutable-struct] for more info.
