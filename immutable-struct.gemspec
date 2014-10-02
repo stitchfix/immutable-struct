@@ -6,11 +6,11 @@ require 'immutable-struct'
 Gem::Specification.new do |spec|
   spec.name          = "immutable-struct"
   spec.version       = ImmutableStruct::VERSION
-  spec.authors       = ["Dave Copeland"]
-  spec.email         = ["davec@naildrivin5.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.authors       = ["Stitch Fix Engineering"]
+  spec.email         = ["jobs@stitchfix.com"]
+  spec.description   = %q{Easily create value objects without the pain of Ruby's Struct (or its setters)}
+  spec.summary   = %q{Easily create value objects without the pain of Ruby's Struct (or its setters)}
+  spec.homepage      = "http://technology.stitchfix.com"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
