@@ -1,5 +1,7 @@
 = ImmutableStruct
 
+{<img src="https://travis-ci.org/stitchfix/immutable-struct.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/stitchfix/immutable-struct]
+
 Creates struct-like classes (that can build value objects) that do not have setters and also have better constructors than Ruby's built-in +Struct+.
 
 This is highly useful for creating presenters, non-database-related models, or other quick and dirty classes in your application.  Instead of using a +Hash+ or +OpenStruct+, you can create a bit more clarity around your types by using +ImmutableStruct+, which is almost as convienient.
