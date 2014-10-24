@@ -23,7 +23,7 @@ If not using bundler, just use RubyGems:
 
 == To use
 
-    Person = StitchFix::ImmutableStruct.new(:name, :age, :job, :active?) do
+    Person = ImmutableStruct.new(:name, :age, :job, :active?) do
       def minor?
         age < 18
       end
