@@ -14,6 +14,9 @@ class ImmutableStruct
   #              an attribute without a question mark that passes through the raw
   #              value and an attribute *with* the question mark that coerces that
   #              value to a boolean.  You would initialize it with the non-question-mark value
+  #              An attribute that is an array of one symbol will create an attribute named for
+  #              that symbol, but that doesn't return nil, instead returning the +to_a+ of the
+  #              value passed to the construtor.
   # block:: if present, evaluates in the context of the new class, so +def+, +def.self+, +include+
   #         and +extend+ should all work as in a normal class definition.
   #
@@ -42,6 +45,8 @@ class ImmutableStruct
           define_method(attribute) do
             !!instance_variable_get("@#{raw_name}")
           end
+        elsif attribute.kind_of?(Array) and attribute.size == 1
+          attr_reader attribute[0]
         else
           attr_reader attribute
         end
@@ -50,8 +55,13 @@ class ImmutableStruct
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attributes.each do |attribute|
-          ivar_name = attribute.to_s.gsub(/\?$/,'')
-          instance_variable_set("@#{ivar_name}",attrs[ivar_name.to_s] || attrs[ivar_name.to_sym])
+          if attribute.kind_of?(Array) and attribute.size == 1
+            ivar_name = attribute[0].to_s
+            instance_variable_set("@#{ivar_name}", (attrs[ivar_name.to_s] || attrs[ivar_name.to_sym]).to_a)
+          else
+            ivar_name = attribute.to_s.gsub(/\?$/,'')
+            instance_variable_set("@#{ivar_name}",attrs[ivar_name.to_s] || attrs[ivar_name.to_sym])
+          end
         end
       end
     end
