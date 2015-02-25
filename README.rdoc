@@ -23,7 +23,7 @@ If not using bundler, just use RubyGems:
 
 == To use
 
-    Person = ImmutableStruct.new(:name, :age, :job, :active?) do
+    Person = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses]) do
       def minor?
         age < 18
       end
@@ -33,10 +33,13 @@ If not using bundler, just use RubyGems:
                    age: 40,        # age will be 40
                                    # job is omitted, so will be nil
                    active: true)   # active and active? will be true
-    p.name    # => "Dave"
-    p.age     # => 40
-    p.active? # => true
-    p.minor?  # => false
+                                   # addresses is omitted, but since we've selected
+                                   # Array coercion, it'll be []
+    p.name      # => "Dave"
+    p.age       # => 40
+    p.active?   # => true
+    p.minor?    # => false
+    p.addresses # => []
 
 You can also treat the interior as a normal class definition.  
 

@@ -53,6 +53,15 @@ describe ImmutableStruct do
 
     end
 
+    context "allows for values that should be coerced to collections" do
+      it "can define an array value that should never be nil" do
+        klass = ImmutableStruct.new([:foo], :bar)
+        instance = klass.new
+        instance.foo.should == []
+        instance.bar.should == nil
+      end
+    end
+
     it "allows defining instance methods" do
       klass = ImmutableStruct.new(:foo, :bar) do
         def derived; self.foo + ":" + self.bar; end
