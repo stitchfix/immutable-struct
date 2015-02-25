@@ -139,7 +139,9 @@ attribute with a question mark in it (e.g. <code>:foo?</code>) will create
 an attribute without a question mark that passes through the raw value and
 an attribute <strong>with</strong> the question mark that coerces that
 value to a boolean.  You would initialize it with the non-question-mark
-value</p>
+value An attribute that is an array of one symbol will create an attribute
+named for that symbol, but that doesn&#39;t return nil, instead returning
+the <code>to_a</code> of the value passed to the construtor.</p>
 </dd><dt>block
 <dd>
 <p>if present, evaluates in the context of the new class, so <code>def</code>,
@@ -168,7 +170,7 @@ all work as in a normal class definition.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/immutable-struct.rb, line 36</span>
+            <pre><span class="ruby-comment"># File lib/immutable-struct.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">attributes</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attribute</span><span class="ruby-operator">|</span>
@@ -178,6 +180,8 @@ all work as in a normal class definition.</p>
         <span class="ruby-identifier">define_method</span>(<span class="ruby-identifier">attribute</span>) <span class="ruby-keyword">do</span>
           <span class="ruby-operator">!</span><span class="ruby-operator">!</span><span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-node">&quot;@#{raw_name}&quot;</span>)
         <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">attr_reader</span> <span class="ruby-identifier">attribute</span>[<span class="ruby-value">0</span>]
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">attr_reader</span> <span class="ruby-identifier">attribute</span>
       <span class="ruby-keyword">end</span>
@@ -186,8 +190,13 @@ all work as in a normal class definition.</p>
     <span class="ruby-identifier">define_method</span>(<span class="ruby-value">:initialize</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">attrs</span> = <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">||</span> {}
       <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attribute</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">ivar_name</span> = <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\?$/</span>,<span class="ruby-string">&#39;&#39;</span>)
-        <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-node">&quot;@#{ivar_name}&quot;</span>,<span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_s</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_sym</span>])
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">ivar_name</span> = <span class="ruby-identifier">attribute</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-node">&quot;@#{ivar_name}&quot;</span>, (<span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_s</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_sym</span>]).<span class="ruby-identifier">to_a</span>)
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">ivar_name</span> = <span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\?$/</span>,<span class="ruby-string">&#39;&#39;</span>)
+          <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-node">&quot;@#{ivar_name}&quot;</span>,<span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_s</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">ivar_name</span>.<span class="ruby-identifier">to_sym</span>])
+        <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
