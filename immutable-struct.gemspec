@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "immutable-struct"
   spec.version       = ImmutableStruct::VERSION
   spec.authors       = ["Stitch Fix Engineering"]
-  spec.email         = ["jobs@stitchfix.com"]
+  spec.email         = ["opensource@stitchfix.com"]
   spec.description   = %q{Easily create value objects without the pain of Ruby's Struct (or its setters)}
   spec.summary   = %q{Easily create value objects without the pain of Ruby's Struct (or its setters)}
   spec.homepage      = "http://technology.stitchfix.com"
