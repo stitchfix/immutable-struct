@@ -66,10 +66,12 @@ class ImmutableStruct
       end
     end
     klass.class_exec(&block) unless block.nil?
-    imethods = klass.instance_methods(include_super=false)
-    klass.class_exec(imethods) do |imethods|
+    klass.class_exec do
       define_method(:to_h) do
-        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
+        self.instance_variables.each_with_object({}) do |ivar, hash|
+          key = ivar.to_s[1..-1].to_sym  # remove leading '@'
+          hash[key] = self.instance_variable_get(ivar)
+        end
       end
     end
     klass
