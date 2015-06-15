@@ -1,4 +1,3 @@
-require 'pp'
 # Creates classes for value objects/read-only records.  Most useful
 # when creating model objects for concepts not stored in the database.
 #
@@ -48,27 +47,25 @@ class ImmutableStruct
   # Please note that, unless overriden, +ImmutableStruct#to_h+ will serialize all zero-arity methods.
   #
   #
-  def self.new(*attributes,&block)
-    raise ArgumentError if attributes.empty?
+  def self.new(*attributes, &block)
+    raise ArgumentError if attributes && attributes.empty?
+
     klass = Class.new do
       array_attr = lambda { |attr| attr.kind_of?(Array) && attr.size == 1 }
       boolean_attr = lambda { |attr| String(attr).match(/(^.*)\?$/) }
-      add_reader = lambda { |attr| begin; attr_reader attr; rescue; raise ArgumentError; end }
 
       attributes.each do |attribute|
         case attribute
-        when String
-          raise ArgumentError
         when boolean_attr
           raw_name = $1
-          add_reader.call(raw_name)
+          attr_reader(raw_name)
           define_method(attribute) do
             !!instance_variable_get("@#{raw_name}")  # get boolean value
           end
         when array_attr
-          add_reader.call(attribute[0])
+          attr_reader(attribute[0])
         else
-          add_reader.call(attribute)
+          attr_reader(attribute)
         end
       end
 
@@ -88,13 +85,15 @@ class ImmutableStruct
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
-    klass.class_exec(imethods, attributes) do |imethods, ctor_attrs|
+    klass.class_exec(imethods, attributes) do |imethods, attributes|
+
+      derived_methods = imethods - attributes - [:to_h]  #to_h is never a derived method, despite its 0-arity
 
       ##
       # :method: attributes_to_h
       # Return a +Hash+ with only those attributes defined in the class constructor.
       define_method(:attributes_to_h) do
-        ctor_attrs.each_with_object({}) do |attr, hash|
+        attributes.each_with_object({}) do |attr, hash|
           ivar = attr.to_s.prepend(?@).to_sym
           hash[attr] = self.instance_variable_get(ivar)
         end
@@ -105,18 +104,18 @@ class ImmutableStruct
       # Return a +Hash+ of the results all zero-arity methods that are not attributes
       # defined in the class constructor 
       define_method(:derived_to_h) do
-        derived_methods = imethods - ctor_attrs
         derived_methods.each_with_object({}) do |derived_method, hash|
           hash[derived_method] = self.send(derived_method) if 0 == self.method(derived_method).arity
         end
       end
 
+      alias_method :__to_h__, :to_h if method_defined?(:to_h)
       ##
       # :method: to_h
       # Return a +Hash+ with the result of merging +attributes_to_h+ and +derived_to_h+.
       # This method can also be overriden so that, for example, only +attributes_to_h+ is used.
       define_method(:to_h) do
-        attributes_to_h.merge(derived_to_h)
+        self.respond_to?(:__to_h__) ? __to_h__ : attributes_to_h.merge(derived_to_h)
       end
     end
     klass
