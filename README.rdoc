@@ -44,7 +44,6 @@ If not using bundler, just use RubyGems:
 == Derived attributes
 A derived attribute is a zero-arity method (ie. getter) that applies a transformation to the existing values stored inside an +ImmutableStruct+. For instance:
 
-```ruby
   example = ImmutableStruct.new(:foo, :bar) do
               def derived
                 self.foo + ":" + self.bar
@@ -53,7 +52,6 @@ A derived attribute is a zero-arity method (ie. getter) that applies a transform
 
   example.new(foo:'alice', bar:'bob').to_h
   #=> "{:foo => 'alice', :bar => 'bob', :derived => 'alice:bob'}"
-```
 
 Please note that, unless overriden, +ImmutableStruct#to_h+ will serialize all zero-arity methods.
 

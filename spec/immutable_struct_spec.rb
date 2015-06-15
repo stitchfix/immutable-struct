@@ -154,7 +154,7 @@ describe ImmutableStruct do
       end
 
       it "can be overriden and return only the attributes defined in the constructor" do
-        instance = klass.new(flappy: 'bird')
+        instance = klass_with_custom_to_h.new(flappy: 'bird')
         instance.attributes_to_h.should == {flappy: 'bird'}
       end
 
