@@ -6,6 +6,16 @@ end
 
 describe ImmutableStruct do
   describe "construction" do
+
+    it "raises ArgumentError for invalid input args" do
+      expect { ImmutableStruct.new() }.to raise_error(ArgumentError)
+      expect { ImmutableStruct.new(nil) }.to raise_error(ArgumentError)
+      expect { ImmutableStruct.new('') }.to raise_error(ArgumentError)
+      expect { ImmutableStruct.new([]) }.to raise_error(ArgumentError)
+      expect { ImmutableStruct.new(42) }.to raise_error(ArgumentError)
+    end
+
+
     context "with non-boolean attributes and no body" do
       before do
         @klass = ImmutableStruct.new(:foo, :bar, :baz)
