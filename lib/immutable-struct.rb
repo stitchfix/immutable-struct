@@ -1,3 +1,4 @@
+require 'pp'
 # Creates classes for value objects/read-only records.  Most useful
 # when creating model objects for concepts not stored in the database.
 #
@@ -35,6 +36,17 @@ class ImmutableStruct
   #     p.location # => nil
   #     p.minor    # => "yup"
   #     p.minor?   # => true
+  #
+  # === Derived attributes
+  # A derived attribute is a zero-arity method (ie. getter) that applies a transformation to the
+  # existing values stored inside an +ImmutableStruct+. For instance:
+  #
+  #    ImmutableStruct.new(:foo, :bar) do
+  #      def derived; self.foo + ":" + self.bar; end
+  #    end
+  #
+  # Please note that, unless overriden, +ImmutableStruct#to_h+ will serialize all zero-arity methods.
+  #
   #
   def self.new(*attributes,&block)
     raise ArgumentError if attributes.empty?
@@ -76,9 +88,35 @@ class ImmutableStruct
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
-    klass.class_exec(imethods) do |imethods|
+    klass.class_exec(imethods, attributes) do |imethods, ctor_attrs|
+
+      ##
+      # :method: attributes_to_h
+      # Return a +Hash+ with only those attributes defined in the class constructor.
+      define_method(:attributes_to_h) do
+        ctor_attrs.each_with_object({}) do |attr, hash|
+          ivar = attr.to_s.prepend(?@).to_sym
+          hash[attr] = self.instance_variable_get(ivar)
+        end
+      end
+
+      ##
+      # :method: derived_to_h
+      # Return a +Hash+ of the results all zero-arity methods that are not attributes
+      # defined in the class constructor 
+      define_method(:derived_to_h) do
+        derived_methods = imethods - ctor_attrs
+        derived_methods.each_with_object({}) do |derived_method, hash|
+          hash[derived_method] = self.send(derived_method) if 0 == self.method(derived_method).arity
+        end
+      end
+
+      ##
+      # :method: to_h
+      # Return a +Hash+ with the result of merging +attributes_to_h+ and +derived_to_h+.
+      # This method can also be overriden so that, for example, only +attributes_to_h+ is used.
       define_method(:to_h) do
-        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
+        attributes_to_h.merge(derived_to_h)
       end
     end
     klass
