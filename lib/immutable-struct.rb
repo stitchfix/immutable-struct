@@ -37,25 +37,34 @@ class ImmutableStruct
   #     p.minor?   # => true
   #
   def self.new(*attributes,&block)
+    raise ArgumentError if attributes.empty?
     klass = Class.new do
+      array_attr = lambda { |attr| attr.kind_of?(Array) && attr.size == 1 }
+      boolean_attr = lambda { |attr| String(attr).match(/(^.*)\?$/) }
+      add_reader = lambda { |attr| begin; attr_reader attr; rescue; raise ArgumentError; end }
+
       attributes.each do |attribute|
-        if attribute.to_s =~ /(^.*)\?$/
+        case attribute
+        when String
+          raise ArgumentError
+        when boolean_attr
           raw_name = $1
-          attr_reader raw_name
+          add_reader.call(raw_name)
           define_method(attribute) do
-            !!instance_variable_get("@#{raw_name}")
+            !!instance_variable_get("@#{raw_name}")  # get boolean value
           end
-        elsif attribute.kind_of?(Array) and attribute.size == 1
-          attr_reader attribute[0]
+        when array_attr
+          add_reader.call(attribute[0])
         else
-          attr_reader attribute
+          add_reader.call(attribute)
         end
       end
 
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attributes.each do |attribute|
-          if attribute.kind_of?(Array) and attribute.size == 1
+          case attribute
+          when array_attr
             ivar_name = attribute[0].to_s
             instance_variable_set("@#{ivar_name}", (attrs[ivar_name.to_s] || attrs[ivar_name.to_sym]).to_a)
           else
@@ -66,12 +75,10 @@ class ImmutableStruct
       end
     end
     klass.class_exec(&block) unless block.nil?
-    klass.class_exec do
+    imethods = klass.instance_methods(include_super=false)
+    klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
-        self.instance_variables.each_with_object({}) do |ivar, hash|
-          key = ivar.to_s[1..-1].to_sym  # remove leading '@'
-          hash[key] = self.instance_variable_get(ivar)
-        end
+        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
       end
     end
     klass

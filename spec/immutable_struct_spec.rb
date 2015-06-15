@@ -103,28 +103,14 @@ describe ImmutableStruct do
   end
 
   describe "to_h" do
-    it "should not include the output of params and block methods in the hash" do
+    it "should include the output of params and block methods in the hash" do
       klass = ImmutableStruct.new(:flappy) do
         def lawsuit
           'pending'
         end
       end
       instance = klass.new(flappy: 'bird')
-      instance.to_h.should == {flappy: 'bird'}
+      instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
     end
-
-    it "allows #== to be overriden" do
-      klass = ImmutableStruct.new(:id, :flappy) do
-        def ==(other)
-          self.id == other.id
-        end
-      end
-      a = klass.new(id: 1, flappy: 'bird')
-      b = klass.new(id: 1, flappy: 'bat')
-      c = klass.new(id: 42, flappy: 'fish')
-      a.should == b
-      c.should_not == b
-    end
-
   end
 end
