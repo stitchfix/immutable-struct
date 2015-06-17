@@ -48,7 +48,7 @@ class ImmutableStruct
   #
   #
   def self.new(*attributes, &block)
-    raise ArgumentError if attributes && attributes.empty?
+    raise ArgumentError if attributes && Array(attributes).empty?
 
     klass = Class.new do
       array_attr = lambda { |attr| attr.kind_of?(Array) && attr.size == 1 }
@@ -94,8 +94,7 @@ class ImmutableStruct
       # Return a +Hash+ with only those attributes defined in the class constructor.
       define_method(:attributes_to_h) do
         attributes.each_with_object({}) do |attr, hash|
-          ivar = attr.to_s.prepend(?@).to_sym
-          hash[attr] = self.instance_variable_get(ivar)
+          hash[attr] = self.instance_variable_get("@#{attr}")
         end
       end
 
@@ -109,13 +108,20 @@ class ImmutableStruct
         end
       end
 
-      alias_method :__to_h__, :to_h if method_defined?(:to_h)
+      method_name = if method_defined?(:to_h)
+                      :to_h_internal
+                    else
+                      :to_h
+                    end
       ##
       # :method: to_h
+      #
       # Return a +Hash+ with the result of merging +attributes_to_h+ and +derived_to_h+.
-      # This method can also be overriden so that, for example, only +attributes_to_h+ is used.
-      define_method(:to_h) do
-        self.respond_to?(:__to_h__) ? __to_h__ : attributes_to_h.merge(derived_to_h)
+      # This method can also be overriden so that, for example, only +attributes_to_h+ or a custom
+      # serialization is used.
+      # In this case, the original +#to_h+ will be automatically redefined as +#to_h_internal+
+      define_method(method_name) do
+        attributes_to_h.merge(derived_to_h)
       end
     end
     klass
