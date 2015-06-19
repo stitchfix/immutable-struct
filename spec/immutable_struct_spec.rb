@@ -10,7 +10,6 @@ describe ImmutableStruct do
     it "raises exceptions when invalid input args are used" do
       expect { ImmutableStruct.new() }.to raise_error(ArgumentError)
       expect { ImmutableStruct.new(nil) }.to raise_error(TypeError)
-      expect { ImmutableStruct.new('') }.to raise_error(NameError)
       expect { ImmutableStruct.new([]) }.to raise_error(TypeError)
       expect { ImmutableStruct.new(42) }.to raise_error(TypeError)
     end

@@ -56,9 +56,6 @@ class ImmutableStruct
 
       attributes.each do |attribute|
         case attribute
-          when ''
-            # Please see https://github.com/stitchfix/immutable-struct/pull/5#issuecomment-112340885
-            raise NameError("invalid attribute name `'")
         when boolean_attr
           raw_name = $1
           attr_reader(raw_name)
