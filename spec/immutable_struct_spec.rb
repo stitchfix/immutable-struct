@@ -113,13 +113,20 @@ describe ImmutableStruct do
 
   describe "to_h" do
     it "should include the output of params and block methods in the hash" do
-      klass = ImmutableStruct.new(:flappy) do
-        def lawsuit
-          'pending'
+      klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
+        def nick_name
+          'bob'
         end
       end
-      instance = klass.new(flappy: 'bird')
-      instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
+      instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
+      instance.to_h.should == {
+        name: "Rudy",
+        minor: "ayup",
+        minor?: true,
+        location: nil,
+        aliases: [ "Rudyard", "Roozoola"],
+        nick_name: "bob",
+      }
     end
   end
 
