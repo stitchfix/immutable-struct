@@ -1,4 +1,5 @@
 # Contributing
+Thanks for using and improving *ImmutableStruct*! If you'd like to help out, check out [the project's issues list][issues] for ideas on what could be improved.  If there's an idea you'd like to propose, or a design change, feel free to file a new issue or send a pull request:
 
 1. [Fork][fork] the repo.
 2. [Create a topic branch.][branch]
