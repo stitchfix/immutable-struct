@@ -73,7 +73,7 @@ describe ImmutableStruct do
     it "allows defining class methods" do
       klass = ImmutableStruct.new(:foo, :bar) do
         def self.from_array(array)
-          self.new(foo: array[0], bar: array[1])
+          new(foo: array[0], bar: array[1])
         end
       end
       instance = klass.from_array(["hello","world"])
