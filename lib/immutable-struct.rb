@@ -76,7 +76,10 @@ class ImmutableStruct
     imethods = klass.instance_methods(include_super=false)
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
-        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
+        imethods.inject({}) do |hash, method|
+          next hash if [:==, :eql?].include?(method)
+          hash.merge(method.to_sym => self.send(method))
+        end
       end
     end
     klass
