@@ -113,4 +113,57 @@ describe ImmutableStruct do
       instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
     end
   end
+
+  describe "equality" do
+
+    before do
+      klass_1 = ImmutableStruct.new(:foo, :bar)
+      klass_2 = ImmutableStruct.new(:foo, :bar)
+      @k1_a = klass_1.new(foo: 'foo', bar: 'bar')
+      @k1_b = klass_1.new(foo: 'xxx', bar: 'yyy')
+      @k1_c = klass_1.new(foo: 'foo', bar: 'bar')
+      @k2_a = klass_2.new(foo: 'foo', bar: 'bar')
+    end
+
+    describe "==" do
+
+      it "should be equal to itself" do
+        @k1_a.should == @k1_a
+      end
+
+      it "should be equal to same class with identical attribute values" do
+        @k1_a.should == @k1_c
+      end
+
+      it 'should not be equal to same class with different attribute values' do
+        @k1_a.should_not == @k1_b
+      end
+
+      it 'should not be equal to different class with identical attribute values' do
+        @k1_a.should_not == @k3_a
+      end
+
+    end
+
+    describe "eql?" do
+
+      it "should be equal to itself" do
+        @k1_a.eql?(@k1_a).should be true
+      end
+
+      it "should be equal to same class with identical attribute values" do
+        @k1_a.eql?(@k1_c).should be true
+      end
+
+      it 'should not be equal to same class with different attribute values' do
+        @k1_a.eql?(@k1_b).should_not be true
+      end
+
+      it 'should not be equal to different class with identical attribute values' do
+        @k1_a.eql?(@k3_a).should_not be true
+      end
+
+    end
+
+  end
 end

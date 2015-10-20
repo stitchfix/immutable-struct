@@ -64,6 +64,13 @@ class ImmutableStruct
           end
         end
       end
+
+      define_method(:==) do |other|
+        return unless other.is_a?(klass)
+        attributes.all? { |attribute| self.send(attribute) == other.send(attribute) }
+      end
+
+      alias_method :eql?, :==
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
