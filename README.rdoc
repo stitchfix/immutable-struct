@@ -41,6 +41,19 @@ If not using bundler, just use RubyGems:
     p.minor?    # => false
     p.addresses # => []
 
+    p2 = Person.new(name: "Dave", age: 40, active: true)
+
+    p == p2     # => true
+    p.eql?(p2)  # => true
+
+    SimilarPerson = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses])
+
+    sp = SimilarPerson.new(name: "Dave", age: 40, active: true)
+
+    p == sp     # => false         # Different class leads to inequality
+
+
+
 You can also treat the interior as a normal class definition.  
 
 == Links
