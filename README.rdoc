@@ -52,8 +52,6 @@ If not using bundler, just use RubyGems:
 
     p == sp     # => false         # Different class leads to inequality
 
-
-
 You can also treat the interior as a normal class definition.  
 
 == Links
