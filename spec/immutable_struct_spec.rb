@@ -6,6 +6,15 @@ end
 
 describe ImmutableStruct do
   describe "construction" do
+
+    it "raises exceptions when invalid input args are used" do
+      expect { ImmutableStruct.new() }.to raise_error(ArgumentError)
+      expect { ImmutableStruct.new(nil) }.to raise_error(TypeError)
+      expect { ImmutableStruct.new([]) }.to raise_error(TypeError)
+      expect { ImmutableStruct.new(42) }.to raise_error(TypeError)
+    end
+
+
     context "with non-boolean attributes and no body" do
       before do
         @klass = ImmutableStruct.new(:foo, :bar, :baz)
@@ -102,15 +111,88 @@ describe ImmutableStruct do
     end
   end
 
-  describe "to_h" do
-    it "should include the output of params and block methods in the hash" do
-      klass = ImmutableStruct.new(:flappy) do
+  context "serialization" do
+
+    let(:klass) {
+      ImmutableStruct.new(:flappy) do
         def lawsuit
           'pending'
         end
       end
-      instance = klass.new(flappy: 'bird')
-      instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
+    }
+
+    let(:klass_with_overriden_to_h_custom) {
+      ImmutableStruct.new(:flappy) do
+        def lawsuit
+          'pending'
+        end
+        def to_h
+          {:custom => 'hash'}
+        end
+      end
+    }
+
+    let(:klass_with_overriden_to_h_ctor_attrs) {
+      ImmutableStruct.new(:flappy) do
+        def lawsuit
+          'pending'
+        end
+        def to_h
+          attributes_to_h
+        end
+      end
+    }
+
+    let(:klass_with_aliased_to_h) {
+      ImmutableStruct.new(:flappy) do
+        def lawsuit
+          'pending'
+        end
+        alias_method :orig_hash, :to_h
+        def to_h
+          orig_hash
+        end
+      end
+    }
+
+    describe "attributes_to_h" do
+      it "returns a hash of only those attributes defined in the constructor" do
+        instance = klass.new(flappy: 'bird')
+        instance.attributes_to_h.should == {flappy: 'bird'}
+      end
+    end
+
+    describe "derived_to_h" do
+      it "returns a hash of the getters that are not attributes defined in the constructor" do
+        instance = klass.new(flappy: 'bird')
+        instance.derived_to_h.should == {lawsuit: 'pending'}
+      end
+    end
+
+    describe "to_h" do
+      it "should include the output of params and block methods in the hash" do
+        instance = klass.new(flappy: 'bird')
+        instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
+      end
+
+      it "can be overriden and return only the attributes defined in the custom #to_h method" do
+        instance = klass_with_overriden_to_h_custom.new(flappy: 'bird')
+        instance.attributes_to_h.should == {flappy: 'bird'}
+        instance.derived_to_h.should == {lawsuit: 'pending'}
+        instance.to_h.should == {custom: 'hash'}
+      end
+
+      it "can be overriden and return only the attributes defined in the constructor" do
+        instance = klass_with_overriden_to_h_ctor_attrs.new(flappy: 'bird')
+        instance.attributes_to_h.should == {flappy: 'bird'}
+        instance.derived_to_h.should == {lawsuit: 'pending'}
+        instance.to_h.should == {flappy: 'bird'}
+      end
+
+      it "cannot be aliased" do
+        expect { klass_with_aliased_to_h.new(flappy: 'bird') }.to raise_error(NameError)
+      end
+
     end
   end
 end

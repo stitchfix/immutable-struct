@@ -36,26 +36,44 @@ class ImmutableStruct
   #     p.minor    # => "yup"
   #     p.minor?   # => true
   #
-  def self.new(*attributes,&block)
+  # === Derived attributes
+  # A derived attribute is a zero-arity method (ie. getter) that applies a transformation to the
+  # existing values stored inside an +ImmutableStruct+. For instance:
+  #
+  #    ImmutableStruct.new(:foo, :bar) do
+  #      def derived; self.foo + ":" + self.bar; end
+  #    end
+  #
+  # Please note that, unless overriden, +ImmutableStruct#to_h+ will serialize all zero-arity methods.
+  #
+  #
+  def self.new(*attributes, &block)
+    raise ArgumentError if attributes && Array(attributes).empty?
+
     klass = Class.new do
+      array_attr = lambda { |attr| attr.kind_of?(Array) && attr.size == 1 }
+      boolean_attr = lambda { |attr| String(attr).match(/(^.*)\?$/) }
+
       attributes.each do |attribute|
-        if attribute.to_s =~ /(^.*)\?$/
+        case attribute
+        when boolean_attr
           raw_name = $1
-          attr_reader raw_name
+          attr_reader(raw_name)
           define_method(attribute) do
-            !!instance_variable_get("@#{raw_name}")
+            !!instance_variable_get("@#{raw_name}")  # get boolean value
           end
-        elsif attribute.kind_of?(Array) and attribute.size == 1
-          attr_reader attribute[0]
+        when array_attr
+          attr_reader(attribute[0])
         else
-          attr_reader attribute
+          attr_reader(attribute)
         end
       end
 
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attributes.each do |attribute|
-          if attribute.kind_of?(Array) and attribute.size == 1
+          case attribute
+          when array_attr
             ivar_name = attribute[0].to_s
             instance_variable_set("@#{ivar_name}", (attrs[ivar_name.to_s] || attrs[ivar_name.to_sym]).to_a)
           else
@@ -67,9 +85,43 @@ class ImmutableStruct
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
-    klass.class_exec(imethods) do |imethods|
-      define_method(:to_h) do
-        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
+    klass.class_exec(imethods, attributes) do |imethods, attributes|
+
+      derived_methods = imethods - attributes - [:to_h]  #to_h is never a derived method, despite its 0-arity
+
+      ##
+      # :method: attributes_to_h
+      # Return a +Hash+ with only those attributes defined in the class constructor.
+      define_method(:attributes_to_h) do
+        attributes.each_with_object({}) do |attr, hash|
+          hash[attr] = self.instance_variable_get("@#{attr}")
+        end
+      end
+
+      ##
+      # :method: derived_to_h
+      # Return a +Hash+ of the results all zero-arity methods that are not attributes
+      # defined in the class constructor 
+      define_method(:derived_to_h) do
+        derived_methods.each_with_object({}) do |derived_method, hash|
+          hash[derived_method] = self.send(derived_method) if 0 == self.method(derived_method).arity
+        end
+      end
+
+      method_name = if method_defined?(:to_h)
+                      :to_h_internal
+                    else
+                      :to_h
+                    end
+      ##
+      # :method: to_h
+      #
+      # Return a +Hash+ with the result of merging +attributes_to_h+ and +derived_to_h+.
+      # This method can also be overriden so that, for example, only +attributes_to_h+ or a custom
+      # serialization is used.
+      # In this case, the original +#to_h+ will be automatically redefined as +#to_h_internal+
+      define_method(method_name) do
+        attributes_to_h.merge(derived_to_h)
       end
     end
     klass
