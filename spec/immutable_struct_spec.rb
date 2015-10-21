@@ -128,19 +128,19 @@ describe ImmutableStruct do
     describe "==" do
 
       it "should be equal to itself" do
-        @k1_a.should == @k1_a
+        (@k1_a == @k1_a).should be true
       end
 
       it "should be equal to same class with identical attribute values" do
-        @k1_a.should == @k1_c
+        (@k1_a == @k1_c).should be true
       end
 
       it 'should not be equal to same class with different attribute values' do
-        @k1_a.should_not == @k1_b
+        (@k1_a == @k1_b).should be false
       end
 
       it 'should not be equal to different class with identical attribute values' do
-        @k1_a.should_not == @k3_a
+        (@k1_a == @k3_a).should be false
       end
 
     end
