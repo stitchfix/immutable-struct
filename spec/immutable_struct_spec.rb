@@ -156,11 +156,11 @@ describe ImmutableStruct do
       end
 
       it 'should not be equal to same class with different attribute values' do
-        @k1_a.eql?(@k1_b).should_not be true
+        @k1_a.eql?(@k1_b).should be false
       end
 
       it 'should not be equal to different class with identical attribute values' do
-        @k1_a.eql?(@k3_a).should_not be true
+        @k1_a.eql?(@k3_a).should be false
       end
 
     end
