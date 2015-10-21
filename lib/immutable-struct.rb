@@ -6,7 +6,7 @@
 # will be evaluated as if it were inside a class definition, allowing you
 # to add methods, include or extend modules, or do whatever else you want.
 class ImmutableStruct
-  VERSION='2.1.1' #:nodoc:
+  VERSION='2.1.2' #:nodoc:
   # Create a new class with the given read-only attributes.
   #
   # attributes:: list of symbols or strings that can be used to create attributes.
@@ -64,12 +64,22 @@ class ImmutableStruct
           end
         end
       end
+
+      define_method(:==) do |other|
+        return false unless other.is_a?(klass)
+        attributes.all? { |attribute| self.send(attribute) == other.send(attribute) }
+      end
+
+      alias_method :eql?, :==
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
-        imethods.inject({}){ |hash, method| hash.merge(method.to_sym => self.send(method)) }
+        imethods.inject({}) do |hash, method|
+          next hash if [:==, :eql?].include?(method)
+          hash.merge(method.to_sym => self.send(method))
+        end
       end
     end
     klass
