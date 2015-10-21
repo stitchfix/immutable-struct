@@ -6,19 +6,16 @@
 
 <title>RDoc Documentation</title>
 
-<link href="./fonts.css" rel="stylesheet">
-<link href="./rdoc.css" rel="stylesheet">
-
 <script type="text/javascript">
   var rdoc_rel_prefix = "./";
 </script>
 
 <script src="./js/jquery.js"></script>
-<script src="./js/navigation.js"></script>
-<script src="./js/search_index.js"></script>
-<script src="./js/search.js"></script>
-<script src="./js/searcher.js"></script>
 <script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
 
 
 <body id="top" role="document" class="file">
@@ -81,7 +78,7 @@
 <main role="main">
 
 
-<h1 id="label-ImmutableStruct"><a href="ImmutableStruct.html">ImmutableStruct</a><span><a href="#label-ImmutableStruct">&para;</a> <a href="#documentation">&uarr;</a></span></h1>
+<h1 id="label-ImmutableStruct"><a href="ImmutableStruct.html">ImmutableStruct</a><span><a href="#label-ImmutableStruct">&para;</a> <a href="#top">&uarr;</a></span></h1>
 
 <p><a href="https://travis-ci.org/stitchfix/immutable-struct"><img
 src="https://travis-ci.org/stitchfix/immutable-struct.svg?branch=master"
@@ -97,21 +94,24 @@ or other quick and dirty classes in your application.  Instead of using a
 clarity around your types by using <code>ImmutableStruct</code>, which is
 almost as convienient.</p>
 
-<h2 id="label-Install">Install<span><a href="#label-Install">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<h2 id="label-Install">Install<span><a href="#label-Install">&para;</a> <a href="#top">&uarr;</a></span></h2>
 
 <p>Add to your <code>Gemfile</code>:</p>
 
-<pre>gem &#39;immutable-struct&#39;</pre>
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;immutable-struct&#39;</span>
+</pre>
 
 <p>Then install:</p>
 
-<pre>bundle install</pre>
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">install</span>
+</pre>
 
 <p>If not using bundler, just use RubyGems:</p>
 
-<pre>gem install immutable-struct</pre>
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-identifier">install</span> <span class="ruby-identifier">immutable</span><span class="ruby-operator">-</span><span class="ruby-identifier">struct</span>
+</pre>
 
-<h2 id="label-To+use">To use<span><a href="#label-To+use">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<h2 id="label-To+use">To use<span><a href="#label-To+use">&para;</a> <a href="#top">&uarr;</a></span></h2>
 
 <pre class="ruby"><span class="ruby-constant">Person</span> = <span class="ruby-constant">ImmutableStruct</span>.<span class="ruby-identifier">new</span>(:<span class="ruby-identifier">name</span>, :<span class="ruby-identifier">age</span>, :<span class="ruby-identifier">job</span>, :<span class="ruby-identifier">active?</span>, [:<span class="ruby-identifier">addresses</span>]) <span class="ruby-keyword">do</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier">minor?</span>
@@ -130,11 +130,22 @@ almost as convienient.</p>
 <span class="ruby-identifier">p</span>.<span class="ruby-identifier">active?</span>   <span class="ruby-comment"># =&gt; true</span>
 <span class="ruby-identifier">p</span>.<span class="ruby-identifier">minor?</span>    <span class="ruby-comment"># =&gt; false</span>
 <span class="ruby-identifier">p</span>.<span class="ruby-identifier">addresses</span> <span class="ruby-comment"># =&gt; []</span>
+
+<span class="ruby-identifier">p2</span> = <span class="ruby-constant">Person</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;Dave&quot;</span>, <span class="ruby-identifier">age</span><span class="ruby-operator">:</span> <span class="ruby-value">40</span>, <span class="ruby-identifier">active</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>)
+
+<span class="ruby-identifier">p</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">p2</span>     <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">p</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">p2</span>)  <span class="ruby-comment"># =&gt; true</span>
+
+<span class="ruby-constant">SimilarPerson</span> = <span class="ruby-constant">ImmutableStruct</span>.<span class="ruby-identifier">new</span>(:<span class="ruby-identifier">name</span>, :<span class="ruby-identifier">age</span>, :<span class="ruby-identifier">job</span>, :<span class="ruby-identifier">active?</span>, [:<span class="ruby-identifier">addresses</span>])
+
+<span class="ruby-identifier">sp</span> = <span class="ruby-constant">SimilarPerson</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;Dave&quot;</span>, <span class="ruby-identifier">age</span><span class="ruby-operator">:</span> <span class="ruby-value">40</span>, <span class="ruby-identifier">active</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>)
+
+<span class="ruby-identifier">p</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">sp</span>     <span class="ruby-comment"># =&gt; false         # Different class leads to inequality</span>
 </pre>
 
 <p>You can also treat the interior as a normal class definition.</p>
 
-<h2 id="label-Links">Links<span><a href="#label-Links">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<h2 id="label-Links">Links<span><a href="#label-Links">&para;</a> <a href="#top">&uarr;</a></span></h2>
 <ul><li>
 <p><a href="http://stitchfix.github.io/immutable-struct">rdoc</a></p>
 </li><li>
@@ -149,7 +160,7 @@ href="http://technology.stitchfix.com/blog/2013/12/20/presenters-delegation-vs-s
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="http://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.0.
-  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+  <p>Generated by <a href="http://docs.seattlerb.org/rdoc/">RDoc</a> 4.2.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 
