@@ -36,6 +36,11 @@ class ImmutableStruct
   #     p.minor    # => "yup"
   #     p.minor?   # => true
   #
+  #     new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
+  #     new_person.name    # => "Other Dave"
+  #     new_person.age     # => 41
+  #     new_person.active? # => true
+  #
   def self.new(*attributes,&block)
     klass = Class.new do
       attributes.each do |attribute|

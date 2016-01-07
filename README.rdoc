@@ -52,7 +52,13 @@ If not using bundler, just use RubyGems:
 
     p == sp     # => false         # Different class leads to inequality
 
+    new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
+    new_person.name    # => "Other Dave"
+    new_person.age     # => 41
+    new_person.active? # => true
+    
 You can also treat the interior as a normal class definition.  
+
 
 == Links
 
