@@ -114,6 +114,24 @@ describe ImmutableStruct do
     end
   end
 
+  describe "merge" do
+    it "returns a new object as a result of merging attributes" do
+      klass = ImmutableStruct.new(:food, :snacks, :butter)
+      instance = klass.new(food: 'hot dogs', butter: true)
+      new_instance = instance.merge(snacks: 'candy hot dogs', butter: false)
+
+      instance.food.should == 'hot dogs'
+      instance.butter.should == true
+      instance.snacks.should == nil
+
+      new_instance.food.should == 'hot dogs'
+      new_instance.snacks.should == 'candy hot dogs'
+      new_instance.butter.should == false
+
+      new_instance.object_id.should_not == instance.object_id
+    end
+  end
+
   describe "equality" do
 
     before do

@@ -36,6 +36,11 @@ class ImmutableStruct
   #     p.minor    # => "yup"
   #     p.minor?   # => true
   #
+  #     new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
+  #     new_person.name    # => "Other Dave"
+  #     new_person.age     # => 41
+  #     new_person.active? # => true
+  #
   def self.new(*attributes,&block)
     klass = Class.new do
       attributes.each do |attribute|
@@ -70,6 +75,11 @@ class ImmutableStruct
         attributes.all? { |attribute| self.send(attribute) == other.send(attribute) }
       end
 
+      define_method(:merge) do |new_attrs|
+        attrs = to_h
+        klass.new(attrs.merge(new_attrs))
+      end
+
       alias_method :eql?, :==
     end
     klass.class_exec(&block) unless block.nil?
@@ -77,7 +87,7 @@ class ImmutableStruct
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
         imethods.inject({}) do |hash, method|
-          next hash if [:==, :eql?].include?(method)
+          next hash if [:==, :eql?, :merge].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end
       end
