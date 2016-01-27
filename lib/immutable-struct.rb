@@ -65,7 +65,8 @@ class ImmutableStruct
             instance_variable_set("@#{ivar_name}", (attrs[ivar_name.to_s] || attrs[ivar_name.to_sym]).to_a)
           else
             ivar_name = attribute.to_s.gsub(/\?$/,'')
-            instance_variable_set("@#{ivar_name}",attrs[ivar_name.to_s] || attrs[ivar_name.to_sym])
+            attr_value = attrs[ivar_name.to_s].nil? ? attrs[ivar_name.to_sym] : attrs[ivar_name.to_s]
+            instance_variable_set("@#{ivar_name}", attr_value)
           end
         end
       end

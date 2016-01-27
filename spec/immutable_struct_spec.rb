@@ -23,11 +23,21 @@ describe ImmutableStruct do
       it { should_not respond_to(:baz?) }
 
       context "instances can be created with a hash" do
-        subject { @klass.new(foo: "FOO", bar: 42, baz: [:a,:b,:c]) }
 
-        it { subject.foo.should == "FOO" }
-        it { subject.bar.should == 42 }
-        it { subject.baz.should == [:a,:b,:c] }
+        context 'with symbol keys' do
+          subject { @klass.new(foo: "FOO", bar: 42, baz: [:a,:b,:c]) }
+
+          it { subject.foo.should == "FOO" }
+          it { subject.bar.should == 42 }
+          it { subject.baz.should == [:a,:b,:c] }
+        end
+
+        context "with string keys" do
+          subject { ImmutableStruct.new(:foo) }
+
+          it { subject.new('foo' => true).foo.should == true }
+          it { subject.new('foo' => false).foo.should == false }
+        end
       end
     end
 
@@ -50,7 +60,6 @@ describe ImmutableStruct do
         it { subject.new(foo: "true").foo?.should == true }
         it { subject.new(foo: "true").foo.should == "true" }
       end
-
     end
 
     context "allows for values that should be coerced to collections" do
