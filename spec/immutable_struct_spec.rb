@@ -192,5 +192,45 @@ describe ImmutableStruct do
 
     end
 
+    describe "hash" do
+
+      it "should have same hash value as itself" do
+        @k1_a.hash.eql?(@k1_a.hash).should be true
+      end
+
+      it "should have same hash value as same class with identical attribute values" do
+        @k1_a.hash.eql?(@k1_c.hash).should be true
+      end
+
+      it 'should not have hash value as same class with different attribute values' do
+        @k1_a.hash.eql?(@k1_b.hash).should be false
+      end
+
+      it 'should not have hash value equal to different class with identical attribute values' do
+        @k1_a.hash.eql?(@k3_a.hash).should be false
+      end
+
+      it 'should reject set addition if same instance is already a member' do
+        set = Set.new([@k1_a])
+        set.add?(@k1_a).should be nil
+      end
+
+      it 'should reject set addition if different instance, but attributes are the same' do
+        set = Set.new([@k1_a])
+        set.add?(@k1_c).should be nil
+      end
+
+      it 'should allow set addition if different instance and attribute values' do
+        set = Set.new([@k1_a])
+        set.add?(@k1_b).should_not be nil
+      end
+
+      it 'should allow set addition if different class' do
+        set = Set.new([@k1_a])
+        set.add?(@k2_a).should_not be nil
+      end
+
+    end
+
   end
 end

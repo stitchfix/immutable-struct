@@ -82,13 +82,18 @@ class ImmutableStruct
       end
 
       alias_method :eql?, :==
+
+      define_method(:hash) do
+        attribute_values = attributes.map { |attr| self.send(attr) }
+        (attribute_values + [self.class]).hash
+      end
     end
     klass.class_exec(&block) unless block.nil?
     imethods = klass.instance_methods(include_super=false)
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
         imethods.inject({}) do |hash, method|
-          next hash if [:==, :eql?, :merge].include?(method)
+          next hash if [:==, :eql?, :merge, :hash].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end
       end
