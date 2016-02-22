@@ -1,4 +1,5 @@
 require 'spec_helper.rb'
+require 'json'
 
 module TestModule
   def hello; "hello"; end
@@ -112,14 +113,61 @@ describe ImmutableStruct do
   end
 
   describe "to_h" do
-    it "should include the output of params and block methods in the hash" do
-      klass = ImmutableStruct.new(:flappy) do
-        def lawsuit
-          'pending'
+    context "vanilla struct with just derived values" do
+      it "should include the output of params and block methods in the hash" do
+        klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
+          def nick_name
+            'bob'
+          end
         end
+        instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
+        instance.to_h.should == {
+          name: "Rudy",
+          minor: "ayup",
+          minor?: true,
+          location: nil,
+          aliases: [ "Rudyard", "Roozoola"],
+          nick_name: "bob",
+        }
       end
-      instance = klass.new(flappy: 'bird')
-      instance.to_h.should == {flappy: 'bird', lawsuit: 'pending'}
+    end
+    context "additional method that takes arguments" do
+      it "should not call the additional method" do
+        klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
+          def nick_name
+            'bob'
+          end
+          def location_near?(other_location)
+            false
+          end
+        end
+        instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
+        instance.to_h.should == {
+          name: "Rudy",
+          minor: "ayup",
+          minor?: true,
+          location: nil,
+          aliases: [ "Rudyard", "Roozoola"],
+          nick_name: "bob",
+        }
+      end
+    end
+
+    context "no-arg method that uses to_h" do
+      it "blows up" do
+        klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
+          def nick_name
+            'bob'
+          end
+          def to_json
+            to_h.to_json
+          end
+        end
+        instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
+        expect {
+          instance.to_json.should == instance.to_h.to_json
+        }.to raise_error(SystemStackError)
+      end
     end
   end
 

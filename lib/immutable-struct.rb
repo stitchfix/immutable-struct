@@ -22,7 +22,7 @@ class ImmutableStruct
   #
   # Example:
   #
-  #     Person = ImmutableStruct.new(:name, :location, :minor?)
+  #     Person = ImmutableStruct.new(:name, :location, :minor?, [:aliases])
   #
   #     p = Person.new(name: 'Dave', location: Location.new("DC"), minor: false)
   #     p.name     # => 'Dave'
@@ -40,6 +40,21 @@ class ImmutableStruct
   #     new_person.name    # => "Other Dave"
   #     new_person.age     # => 41
   #     new_person.active? # => true
+  #
+  # Note that you also get an implementation of `to_h` that will include **all** no-arg methods in its
+  # output:
+  #
+  #     Person = ImmutableStruct.new(:name, :location, :minor?, [:aliases])
+  #     p = Person.new(name: 'Dave', minor: "yup", aliases: [ "davetron", "davetron5000" ])
+  #     p.to_h # => { name: "Dave", minor: "yup", minor?: true, aliases: ["davetron", "davetron5000" ] }
+  # 
+  # This has two subtle side-effects:
+  #
+  # * Methods that take no args, but are not 'attributes' will get called by `to_h`.  This shouldn't be a
+  #   problem, because you should not generally be doing this on a struct-like class.
+  # * Methods that take no args, but call `to_h` will stack overflow.  This is because the class'
+  #   internals have no way to know about this.  This is particularly a problem if you want to
+  #   define your own `to_json` method that serializes the result of `to_h`.
   #
   def self.new(*attributes,&block)
     klass = Class.new do
@@ -89,7 +104,13 @@ class ImmutableStruct
       end
     end
     klass.class_exec(&block) unless block.nil?
-    imethods = klass.instance_methods(include_super=false)
+
+    imethods = klass.instance_methods(include_super=false).map { |method_name|
+      klass.instance_method(method_name)
+    }.reject { |method|
+      method.arity != 0
+    }.map(&:name).map(&:to_sym)
+
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
         imethods.inject({}) do |hash, method|
