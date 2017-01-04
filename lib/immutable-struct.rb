@@ -47,7 +47,7 @@ class ImmutableStruct
   #     Person = ImmutableStruct.new(:name, :location, :minor?, [:aliases])
   #     p = Person.new(name: 'Dave', minor: "yup", aliases: [ "davetron", "davetron5000" ])
   #     p.to_h # => { name: "Dave", minor: "yup", minor?: true, aliases: ["davetron", "davetron5000" ] }
-  # 
+  #
   # This has two subtle side-effects:
   #
   # * Methods that take no args, but are not 'attributes' will get called by `to_h`.  This shouldn't be a
@@ -83,7 +83,9 @@ class ImmutableStruct
             attr_value = attrs[ivar_name.to_s].nil? ? attrs[ivar_name.to_sym] : attrs[ivar_name.to_s]
             instance_variable_set("@#{ivar_name}", attr_value)
           end
+          instance_variable_get("@#{ivar_name}").public_send(:freeze)
         end
+        freeze
       end
 
       define_method(:==) do |other|

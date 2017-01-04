@@ -131,6 +131,7 @@ describe ImmutableStruct do
         }
       end
     end
+
     context "additional method that takes arguments" do
       it "should not call the additional method" do
         klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
@@ -277,8 +278,25 @@ describe ImmutableStruct do
         set = Set.new([@k1_a])
         set.add?(@k2_a).should_not be nil
       end
+    end
+  end
 
+  context "immutability" do
+    it 'freezes the object itself' do
+      klass = ImmutableStruct.new(:foo)
+      instance = klass.new(foo: "foo")
+
+      expect do
+        def instance.bar; end
+      end.to raise_error(RuntimeError)
     end
 
+    it 'freezes all attributes' do
+      klass = ImmutableStruct.new(:foo, :bar)
+      instance = klass.new(foo: "foo", bar: "bar")
+
+      expect{ instance.foo.downcase! }.to raise_error(RuntimeError)
+      expect{ instance.bar.downcase! }.to raise_error(RuntimeError)
+    end
   end
 end
