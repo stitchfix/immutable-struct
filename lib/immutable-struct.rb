@@ -88,7 +88,12 @@ class ImmutableStruct
 
       define_method(:==) do |other|
         return false unless other.is_a?(klass)
-        attributes.all? { |attribute| self.send(attribute) == other.send(attribute) }
+        attributes.all? do |attribute|
+          if attribute.kind_of?(Array) and attribute.size == 1
+            attribute = attribute[0].to_s
+          end
+          self.send(attribute) == other.send(attribute)
+        end
       end
 
       define_method(:merge) do |new_attrs|
@@ -99,7 +104,12 @@ class ImmutableStruct
       alias_method :eql?, :==
 
       define_method(:hash) do
-        attribute_values = attributes.map { |attr| self.send(attr) }
+        attribute_values = attributes.map do |attribute|
+          if attribute.kind_of?(Array) and attribute.size == 1
+            attribute = attribute[0].to_s
+          end
+          self.send(attribute)
+        end
         (attribute_values + [self.class]).hash
       end
     end
