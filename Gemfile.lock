@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    immutable-struct (2.2.2)
+    immutable-struct (2.2.3)
 
 GEM
   remote: https://rubygems.org/
@@ -32,4 +32,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   1.11.2
+   1.14.6
