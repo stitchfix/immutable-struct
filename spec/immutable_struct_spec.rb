@@ -192,12 +192,12 @@ describe ImmutableStruct do
   describe "equality" do
 
     before do
-      klass_1 = ImmutableStruct.new(:foo, :bar)
-      klass_2 = ImmutableStruct.new(:foo, :bar)
-      @k1_a = klass_1.new(foo: 'foo', bar: 'bar')
-      @k1_b = klass_1.new(foo: 'xxx', bar: 'yyy')
-      @k1_c = klass_1.new(foo: 'foo', bar: 'bar')
-      @k2_a = klass_2.new(foo: 'foo', bar: 'bar')
+      klass_1 = ImmutableStruct.new(:foo, [:bars])
+      klass_2 = ImmutableStruct.new(:foo, [:bars])
+      @k1_a = klass_1.new(foo: 'foo', bars: ['bar', 'baz'])
+      @k1_b = klass_1.new(foo: 'xxx', bars: ['yyy'])
+      @k1_c = klass_1.new(foo: 'foo', bars: ['bar', 'baz'])
+      @k2_a = klass_2.new(foo: 'foo', bars: ['bar'])
     end
 
     describe "==" do
