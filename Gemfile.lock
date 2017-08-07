@@ -2,11 +2,13 @@ PATH
   remote: .
   specs:
     immutable-struct (2.2.3)
+      json
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.5)
+    json (2.1.0)
     rake (11.2.2)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)

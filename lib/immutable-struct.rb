@@ -1,3 +1,5 @@
+require 'json'
+
 # Creates classes for value objects/read-only records.  Most useful
 # when creating model objects for concepts not stored in the database.
 #
@@ -47,7 +49,7 @@ class ImmutableStruct
   #     Person = ImmutableStruct.new(:name, :location, :minor?, [:aliases])
   #     p = Person.new(name: 'Dave', minor: "yup", aliases: [ "davetron", "davetron5000" ])
   #     p.to_h # => { name: "Dave", minor: "yup", minor?: true, aliases: ["davetron", "davetron5000" ] }
-  # 
+  #
   # This has two subtle side-effects:
   #
   # * Methods that take no args, but are not 'attributes' will get called by `to_h`.  This shouldn't be a
@@ -127,6 +129,13 @@ class ImmutableStruct
           next hash if [:==, :eql?, :merge, :hash].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end
+      end
+
+      define_method(:to_json) do |*args|
+        imethods.inject({}) do |hash, method|
+          next hash if [:==, :eql?, :merge, :hash].include?(method)
+          hash.merge(method.to_sym => self.send(method))
+        end.to_json
       end
     end
     klass

@@ -171,6 +171,70 @@ describe ImmutableStruct do
     end
   end
 
+
+  describe "to_json" do
+    it 'recursively handles to_json' do
+      klass = ImmutableStruct.new(:name, :subclass)
+
+      subklass = ImmutableStruct.new(:name, :a, :b) do
+        def add
+          a + b
+        end
+      end
+
+      instance = klass.new(
+        name: 'Rudy',
+        subclass: subklass.new(
+          name: 'Jones',
+          a: 1,
+          b: 2
+        )
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"subclass\":{\"name\":\"Jones\",\"a\":1,\"b\":2,\"add\":3}}"
+    end
+
+    it 'handles arrays gracefully' do
+      klass = ImmutableStruct.new(:name, [:aliases] )
+
+      instance = klass.new(
+        name: 'Rudy',
+        aliases: ['Jones', 'Silly']
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"aliases\":[\"Jones\",\"Silly\"]}"
+    end
+
+    it 'recursively handles arrays to_json' do
+      klass = ImmutableStruct.new(:name, [:subclasses])
+
+      subklass = ImmutableStruct.new(:name, :a, :b) do
+        def add
+          a + b
+        end
+      end
+
+      instance = klass.new(
+        name: 'Rudy',
+        subclasses:
+         [
+           subklass.new(
+             name: 'Jones',
+             a: 1,
+             b: 2
+           ),
+           subklass.new(
+             name: 'Silly',
+             a: 3,
+             b: 4
+           )
+        ]
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"subclasses\":[{\"name\":\"Jones\",\"a\":1,\"b\":2,\"add\":3},{\"name\":\"Silly\",\"a\":3,\"b\":4,\"add\":7}]}"
+    end
+  end
+
   describe "merge" do
     it "returns a new object as a result of merging attributes" do
       klass = ImmutableStruct.new(:food, :snacks, :butter)
@@ -279,6 +343,7 @@ describe ImmutableStruct do
       end
 
     end
+
 
   end
 end
