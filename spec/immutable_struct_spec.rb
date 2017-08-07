@@ -164,7 +164,7 @@ describe ImmutableStruct do
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
         expect {
-          instance.to_json.should == instance.to_h.to_json
+          instance.to_s.should == instance.to_h.to_s
         }.to raise_error(SystemStackError)
       end
     end
