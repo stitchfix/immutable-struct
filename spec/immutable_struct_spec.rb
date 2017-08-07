@@ -1,5 +1,4 @@
 require 'spec_helper.rb'
-require 'json'
 
 module TestModule
   def hello; "hello"; end
