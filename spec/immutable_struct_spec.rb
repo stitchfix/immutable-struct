@@ -175,22 +175,20 @@ describe ImmutableStruct do
     it 'recursively handles to_json' do
       klass = ImmutableStruct.new(:name, :subclass)
 
-      subklass = ImmutableStruct.new(:name, :a, :b) do
-        def add
-          a + b
+      subklass = ImmutableStruct.new(:number) do
+        def triple
+          3 * number
         end
       end
 
       instance = klass.new(
         name: 'Rudy',
         subclass: subklass.new(
-          name: 'Jones',
-          a: 1,
-          b: 2
+          number: 1,
         )
       )
       instance.to_json.should ==
-        "{\"name\":\"Rudy\",\"subclass\":{\"name\":\"Jones\",\"a\":1,\"b\":2,\"add\":3}}"
+        "{\"name\":\"Rudy\",\"subclass\":{\"number\":1,\"triple\":3}}"
     end
 
     it 'handles arrays gracefully' do
@@ -207,9 +205,9 @@ describe ImmutableStruct do
     it 'recursively handles arrays to_json' do
       klass = ImmutableStruct.new(:name, [:subclasses])
 
-      subklass = ImmutableStruct.new(:name, :a, :b) do
-        def add
-          a + b
+      subklass = ImmutableStruct.new(:number) do
+        def triple
+          3 * number
         end
       end
 
@@ -218,19 +216,15 @@ describe ImmutableStruct do
         subclasses:
          [
            subklass.new(
-             name: 'Jones',
-             a: 1,
-             b: 2
+             number: 2
            ),
            subklass.new(
-             name: 'Silly',
-             a: 3,
-             b: 4
+             number: 3,
            )
         ]
       )
       instance.to_json.should ==
-        "{\"name\":\"Rudy\",\"subclasses\":[{\"name\":\"Jones\",\"a\":1,\"b\":2,\"add\":3},{\"name\":\"Silly\",\"a\":3,\"b\":4,\"add\":7}]}"
+        "{\"name\":\"Rudy\",\"subclasses\":[{\"number\":2,\"triple\":6},{\"number\":3,\"triple\":9}]}"
     end
   end
 
