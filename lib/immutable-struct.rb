@@ -126,14 +126,14 @@ class ImmutableStruct
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
         imethods.inject({}) do |hash, method|
-          next hash if [:==, :eql?, :merge, :hash].include?(method)
+          next hash if [:to_json, :==, :eql?, :merge, :hash].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end
       end
 
       define_method(:to_json) do |*args|
         imethods.inject({}) do |hash, method|
-          next hash if [:==, :eql?, :merge, :hash].include?(method)
+          next hash if [:to_json, :to_h, :==, :eql?, :merge, :hash].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end.to_json
       end

@@ -158,8 +158,8 @@ describe ImmutableStruct do
           def nick_name
             'bob'
           end
-          def to_json
-            to_h.to_json
+          def to_s
+            to_h.to_s
           end
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
