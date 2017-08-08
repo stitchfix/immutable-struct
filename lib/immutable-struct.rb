@@ -6,7 +6,7 @@
 # will be evaluated as if it were inside a class definition, allowing you
 # to add methods, include or extend modules, or do whatever else you want.
 class ImmutableStruct
-  VERSION='2.2.3' #:nodoc:
+  VERSION='2.3.0.rc1' #:nodoc:
   # Create a new class with the given read-only attributes.
   #
   # attributes:: list of symbols or strings that can be used to create attributes.
@@ -47,7 +47,7 @@ class ImmutableStruct
   #     Person = ImmutableStruct.new(:name, :location, :minor?, [:aliases])
   #     p = Person.new(name: 'Dave', minor: "yup", aliases: [ "davetron", "davetron5000" ])
   #     p.to_h # => { name: "Dave", minor: "yup", minor?: true, aliases: ["davetron", "davetron5000" ] }
-  # 
+  #
   # This has two subtle side-effects:
   #
   # * Methods that take no args, but are not 'attributes' will get called by `to_h`.  This shouldn't be a
@@ -124,9 +124,16 @@ class ImmutableStruct
     klass.class_exec(imethods) do |imethods|
       define_method(:to_h) do
         imethods.inject({}) do |hash, method|
-          next hash if [:==, :eql?, :merge, :hash].include?(method)
+          next hash if [:to_json, :==, :eql?, :merge, :hash].include?(method)
           hash.merge(method.to_sym => self.send(method))
         end
+      end
+
+      define_method(:to_json) do |*args|
+        imethods.inject({}) do |hash, method|
+          next hash if [:to_json, :to_hash, :to_h, :==, :eql?, :merge, :hash].include?(method)
+          hash.merge(method.to_sym => self.send(method))
+        end.to_json(*args)
       end
     end
     klass

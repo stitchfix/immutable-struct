@@ -159,15 +159,73 @@ describe ImmutableStruct do
           def nick_name
             'bob'
           end
-          def to_json
-            to_h.to_json
+          def to_s
+            to_h.to_s
           end
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
         expect {
-          instance.to_json.should == instance.to_h.to_json
+          instance.to_s.should == instance.to_h.to_s
         }.to raise_error(SystemStackError)
       end
+    end
+  end
+
+
+  describe "to_json" do
+    it 'recursively handles to_json' do
+      klass = ImmutableStruct.new(:name, :subclass)
+
+      subklass = ImmutableStruct.new(:number) do
+        def triple
+          3 * number
+        end
+      end
+
+      instance = klass.new(
+        name: 'Rudy',
+        subclass: subklass.new(
+          number: 1,
+        )
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"subclass\":{\"number\":1,\"triple\":3}}"
+    end
+
+    it 'handles arrays gracefully' do
+      klass = ImmutableStruct.new(:name, [:aliases] )
+
+      instance = klass.new(
+        name: 'Rudy',
+        aliases: ['Jones', 'Silly']
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"aliases\":[\"Jones\",\"Silly\"]}"
+    end
+
+    it 'recursively handles arrays to_json' do
+      klass = ImmutableStruct.new(:name, [:subclasses])
+
+      subklass = ImmutableStruct.new(:number) do
+        def triple
+          3 * number
+        end
+      end
+
+      instance = klass.new(
+        name: 'Rudy',
+        subclasses:
+         [
+           subklass.new(
+             number: 2
+           ),
+           subklass.new(
+             number: 3,
+           )
+        ]
+      )
+      instance.to_json.should ==
+        "{\"name\":\"Rudy\",\"subclasses\":[{\"number\":2,\"triple\":6},{\"number\":3,\"triple\":9}]}"
     end
   end
 
@@ -279,6 +337,7 @@ describe ImmutableStruct do
       end
 
     end
+
 
   end
 end
