@@ -1,5 +1,3 @@
-require 'json'
-
 # Creates classes for value objects/read-only records.  Most useful
 # when creating model objects for concepts not stored in the database.
 #
