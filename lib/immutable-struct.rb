@@ -6,7 +6,7 @@
 # will be evaluated as if it were inside a class definition, allowing you
 # to add methods, include or extend modules, or do whatever else you want.
 class ImmutableStruct
-  VERSION='2.2.3' #:nodoc:
+  VERSION='2.3.0' #:nodoc:
   # Create a new class with the given read-only attributes.
   #
   # attributes:: list of symbols or strings that can be used to create attributes.
