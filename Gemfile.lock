@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    immutable-struct (2.2.3)
+    immutable-struct (2.3.0)
 
 GEM
   remote: https://rubygems.org/
