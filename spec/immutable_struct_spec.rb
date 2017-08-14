@@ -152,6 +152,20 @@ describe ImmutableStruct do
         }
       end
     end
+    context "to_hash is its alias" do
+      it "is identical" do
+        klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
+          def nick_name
+            'bob'
+          end
+          def location_near?(other_location)
+            false
+          end
+        end
+        instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
+        instance.to_h.should == instance.to_hash
+      end
+    end
 
     context "no-arg method that uses to_h" do
       it "blows up" do
