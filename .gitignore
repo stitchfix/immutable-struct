@@ -16,3 +16,4 @@ test/version_tmp
 tmp
 html
 .*.sw?
+Gemfile.lock
