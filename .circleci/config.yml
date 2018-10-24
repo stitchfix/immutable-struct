@@ -3,9 +3,9 @@
 ---
 version: 2
 jobs:
-  ruby-2.5.1:
+  ruby-2.5.3:
     docker:
-    - image: circleci/ruby:2.5.1
+    - image: circleci/ruby:2.5.3
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -13,14 +13,18 @@ jobs:
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
+        name: Run Additional CI Steps
+        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
+          fi
+    - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify eng-platform
+        command: 'bundle exec y-notify #eng-platform'
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.4.4:
+  ruby-2.4.5:
     docker:
-    - image: circleci/ruby:2.4.4
+    - image: circleci/ruby:2.4.5
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -28,8 +32,12 @@ jobs:
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
+        name: Run Additional CI Steps
+        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
+          fi
+    - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify eng-platform
+        command: 'bundle exec y-notify #eng-platform'
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -37,9 +45,9 @@ workflows:
   version: 2
   on-commit:
     jobs:
-    - ruby-2.5.1:
+    - ruby-2.5.3:
         context: org-global
-    - ruby-2.4.4:
+    - ruby-2.4.5:
         context: org-global
   scheduled:
     triggers:
@@ -50,7 +58,7 @@ workflows:
             only:
             - master
     jobs:
-    - ruby-2.5.1:
+    - ruby-2.5.3:
         context: org-global
-    - ruby-2.4.4:
+    - ruby-2.4.5:
         context: org-global
