@@ -13,31 +13,31 @@ describe ImmutableStruct do
       end
       subject { @klass.new }
 
-      it { should     respond_to(:foo) }
-      it { should     respond_to(:bar) }
-      it { should     respond_to(:baz) }
-      it { should_not respond_to(:foo=) }
-      it { should_not respond_to(:bar=) }
-      it { should_not respond_to(:baz=) }
-      it { should_not respond_to(:foo?) }
-      it { should_not respond_to(:bar?) }
-      it { should_not respond_to(:baz?) }
+      it { is_expected.to     respond_to(:foo) }
+      it { is_expected.to     respond_to(:bar) }
+      it { is_expected.to     respond_to(:baz) }
+      it { is_expected.not_to respond_to(:foo=) }
+      it { is_expected.not_to respond_to(:bar=) }
+      it { is_expected.not_to respond_to(:baz=) }
+      it { is_expected.not_to respond_to(:foo?) }
+      it { is_expected.not_to respond_to(:bar?) }
+      it { is_expected.not_to respond_to(:baz?) }
 
       context "instances can be created with a hash" do
 
         context 'with symbol keys' do
           subject { @klass.new(foo: "FOO", bar: 42, baz: [:a,:b,:c]) }
 
-          it { subject.foo.should == "FOO" }
-          it { subject.bar.should == 42 }
-          it { subject.baz.should == [:a,:b,:c] }
+          it { expect(subject.foo).to eq("FOO") }
+          it { expect(subject.bar).to eq(42) }
+          it { expect(subject.baz).to eq([:a,:b,:c]) }
         end
 
         context "with string keys" do
           subject { ImmutableStruct.new(:foo) }
 
-          it { subject.new('foo' => true).foo.should == true }
-          it { subject.new('foo' => false).foo.should == false }
+          it { expect(subject.new('foo' => true).foo).to eq(true) }
+          it { expect(subject.new('foo' => false).foo).to eq(false) }
         end
       end
     end
@@ -46,20 +46,20 @@ describe ImmutableStruct do
       subject { ImmutableStruct.new(:foo?) }
 
       context "with boolean values" do
-        it { subject.new(foo: false).foo?.should == false }
-        it { subject.new(foo: false).foo.should == false }
-        it { subject.new(foo: true).foo?.should == true }
-        it { subject.new(foo: true).foo.should == true }
+        it { expect(subject.new(foo: false).foo?).to eq(false) }
+        it { expect(subject.new(foo: false).foo).to eq(false) }
+        it { expect(subject.new(foo: true).foo?).to eq(true) }
+        it { expect(subject.new(foo: true).foo).to eq(true) }
       end
 
       context "with falsey, non-boolean values" do
-        it { subject.new.foo?.should == false }
-        it { subject.new.foo.should == nil }
+        it { expect(subject.new.foo?).to eq(false) }
+        it { expect(subject.new.foo).to eq(nil) }
       end
 
       context "with truthy, non-boolean values" do
-        it { subject.new(foo: "true").foo?.should == true }
-        it { subject.new(foo: "true").foo.should == "true" }
+        it { expect(subject.new(foo: "true").foo?).to eq(true) }
+        it { expect(subject.new(foo: "true").foo).to eq("true") }
       end
     end
 
@@ -67,8 +67,8 @@ describe ImmutableStruct do
       it "can define an array value that should never be nil" do
         klass = ImmutableStruct.new([:foo], :bar)
         instance = klass.new
-        instance.foo.should == []
-        instance.bar.should == nil
+        expect(instance.foo).to eq([])
+        expect(instance.bar).to eq(nil)
       end
     end
 
@@ -77,7 +77,7 @@ describe ImmutableStruct do
         def derived; self.foo + ":" + self.bar; end
       end
       instance = klass.new(foo: "hello", bar: "world")
-      instance.derived.should == "hello:world"
+      expect(instance.derived).to eq("hello:world")
     end
 
     it "allows defining class methods" do
@@ -87,8 +87,8 @@ describe ImmutableStruct do
         end
       end
       instance = klass.from_array(["hello","world"])
-      instance.foo.should == "hello"
-      instance.bar.should == "world"
+      expect(instance.foo).to eq("hello")
+      expect(instance.bar).to eq("world")
     end
 
     it "allows module inclusion" do
@@ -97,8 +97,8 @@ describe ImmutableStruct do
       end
       instance = klass.new
 
-      instance.should  respond_to(:hello)
-      klass.should_not respond_to(:hello)
+      expect(instance).to  respond_to(:hello)
+      expect(klass).not_to respond_to(:hello)
     end
 
     it "allows module extension" do
@@ -107,8 +107,8 @@ describe ImmutableStruct do
       end
       instance = klass.new
 
-      instance.should_not respond_to(:hello)
-      klass.should        respond_to(:hello)
+      expect(instance).not_to respond_to(:hello)
+      expect(klass).to        respond_to(:hello)
     end
   end
 
@@ -121,14 +121,14 @@ describe ImmutableStruct do
           end
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
-        instance.to_h.should == {
+        expect(instance.to_h).to eq({
           name: "Rudy",
           minor: "ayup",
           minor?: true,
           location: nil,
           aliases: [ "Rudyard", "Roozoola"],
           nick_name: "bob",
-        }
+        })
       end
     end
     context "additional method that takes arguments" do
@@ -142,14 +142,14 @@ describe ImmutableStruct do
           end
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
-        instance.to_h.should == {
+        expect(instance.to_h).to eq({
           name: "Rudy",
           minor: "ayup",
           minor?: true,
           location: nil,
           aliases: [ "Rudyard", "Roozoola"],
           nick_name: "bob",
-        }
+        })
       end
     end
     context "to_hash is its alias" do
@@ -163,7 +163,7 @@ describe ImmutableStruct do
           end
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
-        instance.to_h.should == instance.to_hash
+        expect(instance.to_h).to eq(instance.to_hash)
       end
     end
 
@@ -179,7 +179,7 @@ describe ImmutableStruct do
         end
         instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
         expect {
-          instance.to_json.should == instance.to_h.to_json
+          expect(instance.to_json).to eq(instance.to_h.to_json)
         }.to raise_error(SystemStackError)
       end
     end
@@ -191,15 +191,15 @@ describe ImmutableStruct do
       instance = klass.new(food: 'hot dogs', butter: true)
       new_instance = instance.merge(snacks: 'candy hot dogs', butter: false)
 
-      instance.food.should == 'hot dogs'
-      instance.butter.should == true
-      instance.snacks.should == nil
+      expect(instance.food).to eq('hot dogs')
+      expect(instance.butter).to eq(true)
+      expect(instance.snacks).to eq(nil)
 
-      new_instance.food.should == 'hot dogs'
-      new_instance.snacks.should == 'candy hot dogs'
-      new_instance.butter.should == false
+      expect(new_instance.food).to eq('hot dogs')
+      expect(new_instance.snacks).to eq('candy hot dogs')
+      expect(new_instance.butter).to eq(false)
 
-      new_instance.object_id.should_not == instance.object_id
+      expect(new_instance.object_id).not_to eq(instance.object_id)
     end
   end
 
@@ -217,19 +217,19 @@ describe ImmutableStruct do
     describe "==" do
 
       it "should be equal to itself" do
-        (@k1_a == @k1_a).should be true
+        expect(@k1_a == @k1_a).to be true
       end
 
       it "should be equal to same class with identical attribute values" do
-        (@k1_a == @k1_c).should be true
+        expect(@k1_a == @k1_c).to be true
       end
 
       it 'should not be equal to same class with different attribute values' do
-        (@k1_a == @k1_b).should be false
+        expect(@k1_a == @k1_b).to be false
       end
 
       it 'should not be equal to different class with identical attribute values' do
-        (@k1_a == @k3_a).should be false
+        expect(@k1_a == @k3_a).to be false
       end
 
     end
@@ -237,19 +237,19 @@ describe ImmutableStruct do
     describe "eql?" do
 
       it "should be equal to itself" do
-        @k1_a.eql?(@k1_a).should be true
+        expect(@k1_a.eql?(@k1_a)).to be true
       end
 
       it "should be equal to same class with identical attribute values" do
-        @k1_a.eql?(@k1_c).should be true
+        expect(@k1_a.eql?(@k1_c)).to be true
       end
 
       it 'should not be equal to same class with different attribute values' do
-        @k1_a.eql?(@k1_b).should be false
+        expect(@k1_a.eql?(@k1_b)).to be false
       end
 
       it 'should not be equal to different class with identical attribute values' do
-        @k1_a.eql?(@k3_a).should be false
+        expect(@k1_a.eql?(@k3_a)).to be false
       end
 
     end
@@ -257,39 +257,39 @@ describe ImmutableStruct do
     describe "hash" do
 
       it "should have same hash value as itself" do
-        @k1_a.hash.eql?(@k1_a.hash).should be true
+        expect(@k1_a.hash.eql?(@k1_a.hash)).to be true
       end
 
       it "should have same hash value as same class with identical attribute values" do
-        @k1_a.hash.eql?(@k1_c.hash).should be true
+        expect(@k1_a.hash.eql?(@k1_c.hash)).to be true
       end
 
       it 'should not have hash value as same class with different attribute values' do
-        @k1_a.hash.eql?(@k1_b.hash).should be false
+        expect(@k1_a.hash.eql?(@k1_b.hash)).to be false
       end
 
       it 'should not have hash value equal to different class with identical attribute values' do
-        @k1_a.hash.eql?(@k3_a.hash).should be false
+        expect(@k1_a.hash.eql?(@k3_a.hash)).to be false
       end
 
       it 'should reject set addition if same instance is already a member' do
         set = Set.new([@k1_a])
-        set.add?(@k1_a).should be nil
+        expect(set.add?(@k1_a)).to be nil
       end
 
       it 'should reject set addition if different instance, but attributes are the same' do
         set = Set.new([@k1_a])
-        set.add?(@k1_c).should be nil
+        expect(set.add?(@k1_c)).to be nil
       end
 
       it 'should allow set addition if different instance and attribute values' do
         set = Set.new([@k1_a])
-        set.add?(@k1_b).should_not be nil
+        expect(set.add?(@k1_b)).not_to be nil
       end
 
       it 'should allow set addition if different class' do
         set = Set.new([@k1_a])
-        set.add?(@k2_a).should_not be nil
+        expect(set.add?(@k2_a)).not_to be nil
       end
 
     end
