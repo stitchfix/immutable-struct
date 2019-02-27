@@ -3,9 +3,9 @@
 ---
 version: 2
 jobs:
-  ruby-2.5.3:
+  ruby-2.6.1:
     docker:
-    - image: circleci/ruby:2.5.3
+    - image: circleci/ruby:2.6.1
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -22,9 +22,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.4.5:
+  ruby-2.5.3:
     docker:
-    - image: circleci/ruby:2.4.5
+    - image: circleci/ruby:2.5.3
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -45,9 +45,9 @@ workflows:
   version: 2
   on-commit:
     jobs:
-    - ruby-2.5.3:
+    - ruby-2.6.1:
         context: org-global
-    - ruby-2.4.5:
+    - ruby-2.5.3:
         context: org-global
   scheduled:
     triggers:
@@ -58,7 +58,7 @@ workflows:
             only:
             - master
     jobs:
-    - ruby-2.5.3:
+    - ruby-2.6.1:
         context: org-global
-    - ruby-2.4.5:
+    - ruby-2.5.3:
         context: org-global
