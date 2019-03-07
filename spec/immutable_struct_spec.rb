@@ -24,7 +24,6 @@ describe ImmutableStruct do
       it { is_expected.not_to respond_to(:baz?) }
 
       context "instances can be created with a hash" do
-
         context 'with symbol keys' do
           subject { @klass.new(foo: "FOO", bar: 42, baz: [:a,:b,:c]) }
 
@@ -131,6 +130,7 @@ describe ImmutableStruct do
         })
       end
     end
+
     context "additional method that takes arguments" do
       it "should not call the additional method" do
         klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
@@ -152,6 +152,7 @@ describe ImmutableStruct do
         })
       end
     end
+
     context "to_hash is its alias" do
       it "is identical" do
         klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
@@ -187,7 +188,6 @@ describe ImmutableStruct do
   end
 
   describe "equality" do
-
     before do
       klass_1 = ImmutableStruct.new(:foo, [:bars])
       klass_2 = ImmutableStruct.new(:foo, [:bars])
@@ -198,7 +198,6 @@ describe ImmutableStruct do
     end
 
     describe "==" do
-
       it "should be equal to itself" do
         expect(@k1_a == @k1_a).to be true
       end
@@ -214,11 +213,9 @@ describe ImmutableStruct do
       it 'should not be equal to different class with identical attribute values' do
         expect(@k1_a == @k3_a).to be false
       end
-
     end
 
     describe "eql?" do
-
       it "should be equal to itself" do
         expect(@k1_a.eql?(@k1_a)).to be true
       end
@@ -234,11 +231,9 @@ describe ImmutableStruct do
       it 'should not be equal to different class with identical attribute values' do
         expect(@k1_a.eql?(@k3_a)).to be false
       end
-
     end
 
     describe "hash" do
-
       it "should have same hash value as itself" do
         expect(@k1_a.hash.eql?(@k1_a.hash)).to be true
       end
@@ -274,8 +269,6 @@ describe ImmutableStruct do
         set = Set.new([@k1_a])
         expect(set.add?(@k2_a)).not_to be nil
       end
-
     end
-
   end
 end
