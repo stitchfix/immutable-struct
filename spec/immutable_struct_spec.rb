@@ -166,23 +166,6 @@ describe ImmutableStruct do
         expect(instance.to_h).to eq(instance.to_hash)
       end
     end
-
-    context "no-arg method that uses to_h" do
-      it "blows up" do
-        klass = ImmutableStruct.new(:name, :minor?, :location, [:aliases]) do
-          def nick_name
-            'bob'
-          end
-          def to_json
-            to_h.to_json
-          end
-        end
-        instance = klass.new(name: "Rudy", minor: "ayup", aliases: [ "Rudyard", "Roozoola" ])
-        expect {
-          expect(instance.to_json).to eq(instance.to_h.to_json)
-        }.to raise_error(SystemStackError)
-      end
-    end
   end
 
   describe "merge" do
