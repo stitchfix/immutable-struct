@@ -56,7 +56,7 @@ If not using bundler, just use RubyGems:
     new_person.name    # => "Other Dave"
     new_person.age     # => 41
     new_person.active? # => true
-    
+
 You can treat the interior of the block as a normal class definition with the exception of setting constants.
 Use +const_set+ to scope constants as-expected.
 
@@ -66,7 +66,7 @@ Use +const_set+ to scope constants as-expected.
     end
     Point::ZERO # => 0
     ::ONE_HUNDRED # => 100
-    ::ZERO # => NameError: uninitialized constant ZERO    
+    ::ZERO # => NameError: uninitialized constant ZERO
 
 
 == Links
