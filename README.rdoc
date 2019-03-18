@@ -57,6 +57,16 @@ If not using bundler, just use RubyGems:
     new_person.age     # => 41
     new_person.active? # => true
 
+You can coerce values into struct types by using the +from+ method.
+This is similar to Ruby's conversion functions, e.g. Integer("1").
+
+    dave = Person.from(p)
+    dave.equal?(p) # => true (object equality)
+
+    daveish = Person.from(dave.to_h)
+    daveish.equal?(dave) # => false
+    daveish == dave      # => true
+
 You can treat the interior of the block as a normal class definition with the exception of setting constants.
 Use +const_set+ to scope constants as-expected.
 
