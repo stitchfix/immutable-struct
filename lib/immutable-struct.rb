@@ -73,10 +73,9 @@ class ImmutableStruct
       end
 
       define_singleton_method(:coerce) do |value|
-        if value.is_a?(self)
-          value
-        elsif value.is_a?(Hash)
-          new(value)
+        case value
+        when self then value
+        when Hash then new(value)
         else
           raise ArgumentError, "cannot coerce #{value.class} #{value.inspect} into #{self}"
         end
