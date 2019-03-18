@@ -111,6 +111,18 @@ describe ImmutableStruct do
     end
   end
 
+  describe "coercion" do
+    it "is a noop when value is already the defined type" do
+      klass = ImmutableStruct.new(:lolwat)
+      value = klass.new
+      new_value = klass.coerce(value)
+      expect(new_value).to be(value)
+    end
+
+    it "initializes a new value when Hash is given"
+    it "errors when value cannot be coerced"
+  end
+
   describe "to_h" do
     context "vanilla struct with just derived values" do
       it "should include the output of params and block methods in the hash" do

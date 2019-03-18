@@ -72,6 +72,10 @@ class ImmutableStruct
         end
       end
 
+      define_singleton_method(:coerce) do |value|
+        value
+      end
+
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attributes.each do |attribute|
