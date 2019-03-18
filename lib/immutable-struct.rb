@@ -77,6 +77,8 @@ class ImmutableStruct
           value
         elsif value.is_a?(Hash)
           new(value)
+        else
+          raise ArgumentError, "cannot coerce #{value.class} #{value.inspect} into #{self}"
         end
       end
 

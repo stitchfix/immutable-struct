@@ -125,7 +125,10 @@ describe ImmutableStruct do
       expect(value.lolwat).to eq("haha")
     end
 
-    it "errors when value cannot be coerced"
+    it "errors when value cannot be coerced" do
+      expect { klass.coerce(Object.new) }
+        .to raise_error(ArgumentError)
+    end
   end
 
   describe "to_h" do
