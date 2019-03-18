@@ -116,17 +116,17 @@ describe ImmutableStruct do
 
     it "is a noop when value is already the defined type" do
       value = klass.new
-      new_value = klass.coerce(value)
+      new_value = klass.from(value)
       expect(new_value).to be(value)
     end
 
     it "initializes a new value when Hash is given" do
-      value = klass.coerce(lolwat: "haha")
+      value = klass.from(lolwat: "haha")
       expect(value.lolwat).to eq("haha")
     end
 
     it "errors when value cannot be coerced" do
-      expect { klass.coerce(Object.new) }
+      expect { klass.from(Object.new) }
         .to raise_error(ArgumentError)
     end
   end

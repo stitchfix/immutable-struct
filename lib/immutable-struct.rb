@@ -72,7 +72,7 @@ class ImmutableStruct
         end
       end
 
-      define_singleton_method(:coerce) do |value|
+      define_singleton_method(:from) do |value|
         case value
         when self then value
         when Hash then new(value)
