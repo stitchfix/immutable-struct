@@ -112,14 +112,19 @@ describe ImmutableStruct do
   end
 
   describe "coercion" do
+    let(:klass) { ImmutableStruct.new(:lolwat) }
+
     it "is a noop when value is already the defined type" do
-      klass = ImmutableStruct.new(:lolwat)
       value = klass.new
       new_value = klass.coerce(value)
       expect(new_value).to be(value)
     end
 
-    it "initializes a new value when Hash is given"
+    it "initializes a new value when Hash is given" do
+      value = klass.coerce(lolwat: "haha")
+      expect(value.lolwat).to eq("haha")
+    end
+
     it "errors when value cannot be coerced"
   end
 

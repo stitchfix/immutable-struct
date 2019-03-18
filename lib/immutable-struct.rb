@@ -73,7 +73,11 @@ class ImmutableStruct
       end
 
       define_singleton_method(:coerce) do |value|
-        value
+        if value.is_a?(self)
+          value
+        elsif value.is_a?(Hash)
+          new(value)
+        end
       end
 
       define_method(:initialize) do |*args|
