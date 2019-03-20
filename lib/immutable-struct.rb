@@ -72,6 +72,15 @@ class ImmutableStruct
         end
       end
 
+      define_singleton_method(:from) do |value|
+        case value
+        when self then value
+        when Hash then new(value)
+        else
+          raise ArgumentError, "cannot coerce #{value.class} #{value.inspect} into #{self}"
+        end
+      end
+
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attributes.each do |attribute|
