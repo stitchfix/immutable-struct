@@ -87,7 +87,7 @@ class ImmutableStruct
         @@aliases.store(aliaz, [attr, block])
       end
 
-      def method_missing(m, *_, &_)
+      def method_missing(m, *_args, &_block)
         if @@aliases.keys.include?(m)
           attr, block = @@aliases[m]
           block.call(m, attr) if block
