@@ -149,6 +149,22 @@ describe ImmutableStruct do
       value = struct.new(wat: "haha")
       expect(value.lol).to eq("haha")
     end
+
+    it "provides hook to call when alias is referenced" do
+      expect { |b|
+        struct = ImmutableStruct.new(:wat) do
+          alias_attribute :lol, :wat, &b
+        end
+        struct.new(lol: "haha")
+      }.to yield_with_args(:lol, :wat)
+
+      expect { |b|
+        struct = ImmutableStruct.new(:wat) do
+          alias_attribute :lol, :wat, &b
+        end
+        struct.new(wat: "haha").lol
+      }.to yield_with_args(:lol, :wat)
+    end
   end
 
   describe "to_h" do

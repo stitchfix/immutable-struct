@@ -83,13 +83,14 @@ class ImmutableStruct
 
       @@aliases = {}
 
-      def self.alias_attribute(aliaz, attr)
-        @@aliases.store(aliaz, attr])
+      def self.alias_attribute(aliaz, attr, &block)
+        @@aliases.store(aliaz, [attr, block])
       end
 
       def method_missing(m, *_, &_)
         if @@aliases.keys.include?(m)
-          attr = @@aliases[m]
+          attr, block = @@aliases[m]
+          block.call(m, attr) if block
           public_send(attr)
         else
           super
@@ -142,8 +143,13 @@ class ImmutableStruct
 
       def map_aliases(attrs)
         attrs.transform_keys { |k|
-          attr = @@aliases[k]
-          attr || k
+          attr, block = @@aliases[k]
+          if attr
+            block.call(k, attr) if block
+            attr
+          else
+            k
+          end
         }
       end
     end
