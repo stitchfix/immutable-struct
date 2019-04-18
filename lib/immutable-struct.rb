@@ -105,9 +105,9 @@ class ImmutableStruct
         end
       end
 
-      define_method(:merge) do |new_attrs|
+      def merge(new_attrs)
         attrs = to_h
-        klass.new(attrs.merge(new_attrs))
+        self.class.new(attrs.merge(new_attrs))
       end
 
       alias_method :eql?, :==
