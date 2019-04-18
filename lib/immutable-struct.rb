@@ -81,8 +81,15 @@ class ImmutableStruct
         end
       end
 
+      @@aliases = {}
+
+      def self.alias_attribute(aliaz, attr)
+        @@aliases.store(aliaz, attr])
+      end
+
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
+        attrs = map_aliases(attrs)
         attributes.each do |attribute|
           if attribute.kind_of?(Array) and attribute.size == 1
             ivar_name = attribute[0].to_s
@@ -120,6 +127,15 @@ class ImmutableStruct
           self.send(attribute)
         end
         (attribute_values + [self.class]).hash
+      end
+
+      private
+
+      def map_aliases(attrs)
+        attrs.transform_keys { |k|
+          attr = @@aliases[k]
+          attr || k
+        }
       end
     end
     klass.class_exec(&block) unless block.nil?

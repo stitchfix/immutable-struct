@@ -133,8 +133,6 @@ describe ImmutableStruct do
 
   describe "aliases" do
     it "allows object construction by alias" do
-      pending
-
       struct = ImmutableStruct.new(:wat) do
         alias_attribute :lol, :wat
       end
