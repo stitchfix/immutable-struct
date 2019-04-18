@@ -131,6 +131,30 @@ describe ImmutableStruct do
     end
   end
 
+  describe "aliases" do
+    it "allows object construction by alias" do
+      pending
+
+      struct = ImmutableStruct.new(:wat) do
+        alias_attribute :lol, :wat
+      end
+
+      value = struct.new(lol: "haha")
+      expect(value.wat).to eq("haha")
+    end
+
+    it "allows value retrieval by alias" do
+      pending
+
+      struct = ImmutableStruct.new(:wat) do
+        alias_attribute :lol, :wat
+      end
+
+      value = struct.new(wat: "haha")
+      expect(value.lol).to eq("haha")
+    end
+  end
+
   describe "to_h" do
     context "vanilla struct with just derived values" do
       it "should include the output of params and block methods in the hash" do
