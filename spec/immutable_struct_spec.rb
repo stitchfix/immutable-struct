@@ -142,8 +142,6 @@ describe ImmutableStruct do
     end
 
     it "allows value retrieval by alias" do
-      pending
-
       struct = ImmutableStruct.new(:wat) do
         alias_attribute :lol, :wat
       end

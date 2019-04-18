@@ -87,6 +87,15 @@ class ImmutableStruct
         @@aliases.store(aliaz, attr])
       end
 
+      def method_missing(m, *_, &_)
+        if @@aliases.keys.include?(m)
+          attr = @@aliases[m]
+          public_send(attr)
+        else
+          super
+        end
+      end
+
       define_method(:initialize) do |*args|
         attrs = args[0] || {}
         attrs = map_aliases(attrs)
