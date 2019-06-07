@@ -22,6 +22,7 @@ jobs:
     working_directory: "~/immutable-struct"
     steps:
     - checkout
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
@@ -41,6 +42,7 @@ jobs:
     working_directory: "~/immutable-struct"
     steps:
     - checkout
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
