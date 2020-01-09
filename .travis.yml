@@ -5,3 +5,6 @@ rvm:
   - ruby-head
 before_install:
   - gem install bundler
+jobs:
+  allow_failures:
+    - rvm: ruby-head
