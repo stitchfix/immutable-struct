@@ -5,7 +5,7 @@ version: 2
 jobs:
   release:
     docker:
-    - image: circleci/ruby:2.7.0
+    - image: circleci/ruby:2.7.1
     steps:
     - checkout
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
@@ -17,9 +17,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-2.7.0:
+  ruby-2.7.1:
     docker:
-    - image: circleci/ruby:2.7.0
+    - image: circleci/ruby:2.7.1
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -37,9 +37,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.6.5:
+  ruby-2.6.6:
     docker:
-    - image: circleci/ruby:2.6.5
+    - image: circleci/ruby:2.6.6
     working_directory: "~/immutable-struct"
     steps:
     - checkout
@@ -64,19 +64,19 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-2.7.0
-        - ruby-2.6.5
+        - ruby-2.7.1
+        - ruby-2.6.6
         filters:
           tags:
-            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?RC[-\.]?\d*)?$/
+            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\d*)?$/
           branches:
             ignore: /.*/
-    - ruby-2.7.0:
+    - ruby-2.7.1:
         context: org-global
         filters:
           tags:
             only: &1 /.*/
-    - ruby-2.6.5:
+    - ruby-2.6.6:
         context: org-global
         filters:
           tags:
@@ -90,7 +90,7 @@ workflows:
             only:
             - master
     jobs:
-    - ruby-2.7.0:
+    - ruby-2.7.1:
         context: org-global
-    - ruby-2.6.5:
+    - ruby-2.6.6:
         context: org-global
