@@ -5,7 +5,7 @@ version: 2
 jobs:
   generate-and-push-docs:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -26,7 +26,7 @@ jobs:
           docs:push; fi
   release:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -41,9 +41,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-3.1.1:
+  ruby-3.1.2:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -104,7 +104,7 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-3.1.1
+        - ruby-3.1.2
         - ruby-3.0.4
         filters:
           tags:
@@ -120,7 +120,7 @@ workflows:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-\.]?\w*)?$/
           branches:
             ignore: /.*/
-    - ruby-3.1.1:
+    - ruby-3.1.2:
         context: org-global
         filters:
           tags:
@@ -139,7 +139,7 @@ workflows:
             only:
             - main
     jobs:
-    - ruby-3.1.1:
+    - ruby-3.1.2:
         context: org-global
     - ruby-3.0.4:
         context: org-global
