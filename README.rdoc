@@ -23,7 +23,7 @@ If not using bundler, just use RubyGems:
 
 == To use
 
-```ruby
+``` ruby
 Person = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses]) do
   def minor?
     age < 18
