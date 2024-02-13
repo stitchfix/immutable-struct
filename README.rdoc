@@ -23,39 +23,41 @@ If not using bundler, just use RubyGems:
 
 == To use
 
-    Person = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses]) do
-      def minor?
-        age < 18
-      end
-    end
+```ruby
+Person = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses]) do
+  def minor?
+    age < 18
+  end
+end
 
-    p = Person.new(name: "Dave",   # name will be 'Dave'
-                   age: 40,        # age will be 40
-                                   # job is omitted, so will be nil
-                   active: true)   # active and active? will be true
-                                   # addresses is omitted, but since we've selected
-                                   # Array coercion, it'll be []
-    p.name      # => "Dave"
-    p.age       # => 40
-    p.active?   # => true
-    p.minor?    # => false
-    p.addresses # => []
+p = Person.new(name: "Dave",   # name will be 'Dave'
+                age: 40,        # age will be 40
+                                # job is omitted, so will be nil
+                active: true)   # active and active? will be true
+                                # addresses is omitted, but since we've selected
+                                # Array coercion, it'll be []
+p.name      # => "Dave"
+p.age       # => 40
+p.active?   # => true
+p.minor?    # => false
+p.addresses # => []
 
-    p2 = Person.new(name: "Dave", age: 40, active: true)
+p2 = Person.new(name: "Dave", age: 40, active: true)
 
-    p == p2     # => true
-    p.eql?(p2)  # => true
+p == p2     # => true
+p.eql?(p2)  # => true
 
-    SimilarPerson = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses])
+SimilarPerson = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses])
 
-    sp = SimilarPerson.new(name: "Dave", age: 40, active: true)
+sp = SimilarPerson.new(name: "Dave", age: 40, active: true)
 
-    p == sp     # => false         # Different class leads to inequality
+p == sp     # => false         # Different class leads to inequality
 
-    new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
-    new_person.name    # => "Other Dave"
-    new_person.age     # => 41
-    new_person.active? # => true
+new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
+new_person.name    # => "Other Dave"
+new_person.age     # => 41
+new_person.active? # => true
+```
 
 You can coerce values into struct types by using the +from+ method.
 This is similar to Ruby's conversion functions, e.g. Integer("1").
