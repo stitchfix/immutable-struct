@@ -24,7 +24,7 @@ parameters:
 jobs:
   generate-and-push-docs:
     docker:
-    - image: cimg/ruby:3.3.1
+    - image: cimg/ruby:3.3.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -45,7 +45,7 @@ jobs:
           docs:push; fi
   release:
     docker:
-    - image: cimg/ruby:3.3.1
+    - image: cimg/ruby:3.3.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -60,9 +60,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-3_3_1:
+  ruby-3_3_2:
     docker:
-    - image: cimg/ruby:3.3.1
+    - image: cimg/ruby:3.3.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -125,7 +125,7 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-3_3_1
+        - ruby-3_3_2
         - ruby-3_2_4
         filters:
           tags:
@@ -141,7 +141,7 @@ workflows:
             only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
           branches:
             ignore: /.*/
-    - ruby-3_3_1:
+    - ruby-3_3_2:
         context: org-global
         filters:
           tags:
@@ -155,7 +155,7 @@ workflows:
     when:
        equal: [ "schedule", << pipeline.parameters.GHA_Event >> ]
     jobs:
-    - ruby-3_3_1:
+    - ruby-3_3_2:
         context: org-global
     - ruby-3_2_4:
         context: org-global
