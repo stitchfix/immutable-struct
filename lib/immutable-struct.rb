@@ -123,7 +123,11 @@ class ImmutableStruct
       end
 
       def deconstruct_keys(keys)
-        to_h.slice(*keys)
+        if keys
+          to_h.slice(*keys)
+        else
+          to_h
+        end
       end
     end
     klass.class_exec(&block) unless block.nil?
