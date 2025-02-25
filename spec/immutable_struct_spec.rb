@@ -190,6 +190,46 @@ describe ImmutableStruct do
     end
   end
 
+  describe "#deconstruct_keys" do
+    it "returns a hash with the specified keys" do
+      klass = ImmutableStruct.new(:a, :b, :c)
+      instance = klass.new(a: 1, b: 2, c: 3)
+      expect(instance.deconstruct_keys([:a, :c])).to eq({ a: 1, c: 3 })
+    end
+
+    context "when keys are specified that do not exist in the struct" do
+      it 'returns only the keys that do exist' do
+        klass = ImmutableStruct.new(:a, :b, :c)
+        instance = klass.new(a: 1, b: 2, c: 3)
+        expect(instance.deconstruct_keys([:a, :foo])).to eq({ a: 1 })
+      end
+    end
+
+    it "allows an instance to be used with pattern matching" do
+      klass = ImmutableStruct.new(:a, :b, :c)
+      instance = klass.new(a: 1, b: 2, c: 3)
+      expect {
+        case instance
+        in { a: 1 }
+          # good!
+        end
+        # a NoMatchingPatternError would be raised if the pattern didn't match
+      }.not_to raise_error
+    end
+
+    context "pattern matching against 'any key'" do
+      it 'returns all properties' do
+        klass = ImmutableStruct.new(:a, :b, :c)
+        instance = klass.new(a: 1, b: 2, c: 3)
+        case instance
+        in **rest
+          expect(rest).to eq({ a: 1, b: 2, c: 3 })
+        end
+        # a NoMatchingPatternError would be raised if the pattern didn't match
+      end
+    end
+  end
+
   describe "merge" do
     it "returns a new object as a result of merging attributes" do
       klass = ImmutableStruct.new(:food, :snacks, :butter)

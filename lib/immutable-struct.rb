@@ -121,6 +121,14 @@ class ImmutableStruct
         end
         (attribute_values + [self.class]).hash
       end
+
+      def deconstruct_keys(keys)
+        if keys
+          to_h.slice(*keys)
+        else
+          to_h
+        end
+      end
     end
     klass.class_exec(&block) unless block.nil?
 
