@@ -1,6 +1,6 @@
 = ImmutableStruct
 
-{<img src="https://circleci.com/gh/stitchfix/immutable-struct.svg?style=svg" alt="Build Status" />}[https://circleci.com/gh/stitchfix/immutable-struct]
+<a href="https://circleci.com/gh/stitchfix/immutable-struct"><img src="https://circleci.com/gh/stitchfix/immutable-struct.svg?style=svg" alt="Build Status" /></a>
 
 Creates struct-like classes (that can build value objects) that do not have setters and also have better constructors than Ruby's built-in +Struct+.
 
