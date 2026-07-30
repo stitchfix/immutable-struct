@@ -1,0 +1,94 @@
+# ImmutableStruct
+
+[![Build Status](https://circleci.com/gh/stitchfix/immutable-struct.svg?style=svg)](https://circleci.com/gh/stitchfix/immutable-struct)
+
+Creates struct-like classes (that can build value objects) that do not have setters and also have better constructors than Ruby's built-in `Struct`.
+
+This is highly useful for creating presenters, non-database-related models, or other quick and dirty classes in your application. Instead of using a `Hash` or `OpenStruct`, you can create a bit more clarity around your types by using `ImmutableStruct`, which is almost as convenient.
+
+## Install
+
+Add to your `Gemfile`:
+
+```ruby
+gem 'immutable-struct'
+```
+
+Then install:
+
+```
+bundle install
+```
+
+If not using bundler, just use RubyGems:
+
+```
+gem install immutable-struct
+```
+
+## Usage
+
+```ruby
+Person = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses]) do
+  def minor?
+    age < 18
+  end
+end
+
+p = Person.new(name: "Dave",   # name will be 'Dave'
+               age: 40,        # age will be 40
+                               # job is omitted, so will be nil
+               active: true)   # active and active? will be true
+                               # addresses is omitted, but since we've selected
+                               # Array coercion, it'll be []
+p.name      # => "Dave"
+p.age       # => 40
+p.active?   # => true
+p.minor?    # => false
+p.addresses # => []
+
+p2 = Person.new(name: "Dave", age: 40, active: true)
+
+p == p2     # => true
+p.eql?(p2)  # => true
+
+SimilarPerson = ImmutableStruct.new(:name, :age, :job, :active?, [:addresses])
+
+sp = SimilarPerson.new(name: "Dave", age: 40, active: true)
+
+p == sp     # => false         # Different class leads to inequality
+
+new_person = p.merge(name: "Other Dave", age: 41) # returns a new object with merged attributes
+new_person.name    # => "Other Dave"
+new_person.age     # => 41
+new_person.active? # => true
+```
+
+You can coerce values into struct types by using the `from` method. This is similar to Ruby's conversion functions, e.g. `Integer("1")`.
+
+```ruby
+dave = Person.from(p)
+dave.equal?(p) # => true (object equality)
+
+daveish = Person.from(dave.to_h)
+daveish.equal?(dave) # => false
+daveish == dave      # => true
+```
+
+You can treat the interior of the block as a normal class definition with the exception of setting constants. Use `const_set` to scope constants as-expected.
+
+```ruby
+Point = ImmutableStruct.new(:x, :y) do
+  const_set(:ZERO, 0)
+  ONE_HUNDRED = 100
+end
+Point::ZERO   # => 0
+::ONE_HUNDRED # => 100
+::ZERO        # => NameError: uninitialized constant ZERO
+```
+
+## Links
+
+- [rdoc](http://stitchfix.github.io/immutable-struct)
+- [source](http://github.com/stitchfix/immutable-struct)
+- [blog](http://technology.stitchfix.com/blog/2013/12/20/presenters-delegation-vs-structs/)
